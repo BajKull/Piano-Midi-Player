@@ -8,7 +8,15 @@ import { useGLTF } from "@react-three/drei";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 import { Group, Mesh } from "three";
 import { ThreeEvent } from "@react-three/fiber";
-import { keyToNote, Note, noteToOctaveIndex, sounds } from "./pianoKeys";
+import {
+  keyToNote,
+  Note,
+  noteToMesh,
+  noteToOctaveIndex,
+  sounds,
+} from "./pianoKeys";
+
+import { getSongData, getSongs, playSong } from "midi/midiParser";
 
 const KEY_ROTATION_VALUE = Math.PI / 64;
 
@@ -93,34 +101,36 @@ type GLTFResult = GLTF & {
   };
 };
 
+type PressedKey = {
+  mesh: Mesh;
+  soundId: number;
+};
+
 const PianoModel = (props: JSX.IntrinsicElements["group"]) => {
   const { nodes, materials } = useGLTF("/piano.glb") as GLTFResult;
 
-  const pressedKeys = useRef<Map<Note, Mesh>>(new Map());
+  const pressedKeys = useRef<Map<Note, PressedKey>>(new Map());
   const pointerKeyPressed = useRef<Note | null>(null);
   const allKeysRef = useRef<Group | null>(null);
+  const songIntervalTimer = useRef<NodeJS.Timer | null>(null);
 
   const playKey = (key: Note, mesh: Mesh) => {
-    pressedKeys.current.set(key, mesh);
+    console.log(key);
     mesh.rotateZ(KEY_ROTATION_VALUE * -1);
     const sound = sounds.get(key);
-    if (sound?.playing()) {
-      sound.stop();
-      sound.once("stop", () => sound.play());
-    } else sound?.play();
+    if (!sound) return;
+    const soundId = sound.play();
+    pressedKeys.current.set(key, { mesh, soundId });
   };
 
   const stopKey = (key: Note, mesh: Mesh) => {
+    const soundId = pressedKeys.current.get(key)?.soundId;
     pressedKeys.current.delete(key);
     mesh.rotateZ(KEY_ROTATION_VALUE);
     const sound = sounds.get(key);
-    if (sound?.playing()) {
-      sound.fade(1, 0, 250);
-      sound.once("fade", () => {
-        sound.stop();
-        sound.volume(1);
-      });
-    }
+    if (!sound) return;
+    sound.fade(1, 0, 250, soundId);
+    sound.once("fade", () => sound.stop(soundId), soundId);
   };
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>, key: Note) => {
@@ -129,13 +139,14 @@ const PianoModel = (props: JSX.IntrinsicElements["group"]) => {
     pointerKeyPressed.current = key;
   };
 
+  // handle pointer pressed
   useEffect(() => {
     const pointerUp = () => {
       const pointerKey = pointerKeyPressed.current;
       if (!pointerKey) return;
       const mesh = pressedKeys.current.get(pointerKey);
       if (!mesh) return;
-      stopKey(pointerKey, mesh);
+      stopKey(pointerKey, mesh.mesh);
     };
 
     window.addEventListener("pointerup", pointerUp);
@@ -144,19 +155,15 @@ const PianoModel = (props: JSX.IntrinsicElements["group"]) => {
     };
   }, []);
 
+  // handle keyboard pressed
   useEffect(() => {
     const keyDown = (e: KeyboardEvent) => {
       if (e.repeat) return;
+      console.log(e);
       const note = keyToNote.get(e.key) as Note;
       if (!note) return;
-
-      const octaveIndex = +note.slice(-1);
-      const octaves = allKeysRef.current?.children;
-      if (!octaves) return;
-      const octaveKeys = octaves[octaveIndex].children;
-      const noteIndex = noteToOctaveIndex.get(note.slice(0, -1));
-      if (noteIndex === undefined) return;
-      const mesh = octaveKeys[noteIndex] as Mesh;
+      const mesh = noteToMesh(note, allKeysRef);
+      if (!mesh) return;
       playKey(note, mesh);
     };
     const keyUp = (e: KeyboardEvent) => {
@@ -164,7 +171,7 @@ const PianoModel = (props: JSX.IntrinsicElements["group"]) => {
       if (!note) return;
       const mesh = pressedKeys.current.get(note);
       if (!mesh) return;
-      stopKey(note, mesh);
+      stopKey(note, mesh.mesh);
     };
     window.addEventListener("keydown", keyDown);
     window.addEventListener("keyup", keyUp);
@@ -173,6 +180,42 @@ const PianoModel = (props: JSX.IntrinsicElements["group"]) => {
       window.removeEventListener("keydown", keyDown);
       window.removeEventListener("keyup", keyUp);
     };
+  }, []);
+
+  // stop all keys when tab looses focus
+  useEffect(() => {
+    const windowFocusLost = (e: FocusEvent) => {
+      const allPressedKeys = pressedKeys.current.keys();
+      if (!allPressedKeys) return;
+      Array.from(allPressedKeys).forEach((key) => {
+        const mesh = pressedKeys.current.get(key);
+        if (!mesh) return;
+        stopKey(key, mesh.mesh);
+      });
+      const evt = new PointerEvent("pointerup");
+      window.dispatchEvent(evt);
+    };
+
+    window.addEventListener("blur", windowFocusLost);
+    return () => {
+      window.removeEventListener("focus", windowFocusLost);
+    };
+  }, []);
+
+  useEffect(() => {
+    const awaitSongs = async () => {
+      const songs = await getSongs();
+      console.log(songs);
+      const songData = getSongData(songs.skyrim, 0);
+      // playSong({
+      //   playKey,
+      //   stopKey,
+      //   song: songData,
+      //   id: songIntervalTimer,
+      //   allKeys: allKeysRef,
+      // });
+    };
+    awaitSongs();
   }, []);
 
   return (

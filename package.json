@@ -12,6 +12,7 @@
     "@next/font": "13.1.1",
     "@react-three/drei": "^9.51.2",
     "@react-three/fiber": "^8.10.0",
+    "@tonejs/midi": "^2.0.28",
     "@types/howler": "^2.2.7",
     "@types/node": "18.11.18",
     "@types/react": "18.0.26",

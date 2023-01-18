@@ -1,4 +1,5 @@
 import { Howl } from "howler";
+import { Mesh } from "three";
 
 const noteKeys = ["a", "b", "c", "d", "e", "f", "g"] as const;
 const noteSharpKeys = ["a#", "c#", "d#", "f#", "g#"] as const;
@@ -79,6 +80,20 @@ const noteToOctaveValues = {
   "f#": 9,
   "g#": 10,
   "a#": 11,
+};
+
+export const noteToMesh = (
+  note: Note,
+  allKeysRef: React.MutableRefObject<THREE.Group | null>
+) => {
+  const octaveIndex = +note.slice(-1);
+  const octaves = allKeysRef.current?.children;
+  if (!octaves) return;
+  const octaveKeys = octaves[octaveIndex].children;
+  const noteIndex = noteToOctaveIndex.get(note.slice(0, -1));
+  if (noteIndex === undefined) return;
+  const mesh = octaveKeys[noteIndex] as Mesh;
+  return mesh;
 };
 
 export const noteToOctaveIndex = new Map(Object.entries(noteToOctaveValues));

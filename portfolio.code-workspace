@@ -1,0 +1,22 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "restoreTerminals.terminals": [
+      {
+        "splitTerminals": [
+          {
+            "name": "nextjs",
+            "commands": ["pnpm run dev"]
+          },
+          {
+            "name": "node"
+          }
+        ]
+      }
+    ]
+  }
+}
