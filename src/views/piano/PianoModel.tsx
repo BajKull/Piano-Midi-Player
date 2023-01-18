@@ -17,6 +17,7 @@ import {
 } from "./pianoKeys";
 
 import { getSongData, getSongs, playSong } from "midi/midiParser";
+import { useStore } from "store/store";
 
 const KEY_ROTATION_VALUE = Math.PI / 64;
 
@@ -114,6 +115,8 @@ const PianoModel = (props: JSX.IntrinsicElements["group"]) => {
   const allKeysRef = useRef<Group | null>(null);
   const songIntervalTimer = useRef<NodeJS.Timer | null>(null);
 
+  const { keysPressed } = useStore();
+
   const playKey = (key: Note, mesh: Mesh) => {
     console.log(key);
     mesh.rotateZ(KEY_ROTATION_VALUE * -1);
@@ -158,12 +161,12 @@ const PianoModel = (props: JSX.IntrinsicElements["group"]) => {
   // handle keyboard pressed
   useEffect(() => {
     const keyDown = (e: KeyboardEvent) => {
-      if (e.repeat) return;
-      console.log(e);
+      if (keysPressed.get(e.key)) return;
       const note = keyToNote.get(e.key) as Note;
       if (!note) return;
       const mesh = noteToMesh(note, allKeysRef);
       if (!mesh) return;
+      keysPressed.set(e.key, true);
       playKey(note, mesh);
     };
     const keyUp = (e: KeyboardEvent) => {
@@ -171,6 +174,7 @@ const PianoModel = (props: JSX.IntrinsicElements["group"]) => {
       if (!note) return;
       const mesh = pressedKeys.current.get(note);
       if (!mesh) return;
+      keysPressed.delete(e.key);
       stopKey(note, mesh.mesh);
     };
     window.addEventListener("keydown", keyDown);
@@ -180,12 +184,13 @@ const PianoModel = (props: JSX.IntrinsicElements["group"]) => {
       window.removeEventListener("keydown", keyDown);
       window.removeEventListener("keyup", keyUp);
     };
-  }, []);
+  }, [keysPressed]);
 
   // stop all keys when tab looses focus
   useEffect(() => {
-    const windowFocusLost = (e: FocusEvent) => {
+    const windowFocusLost = () => {
       const allPressedKeys = pressedKeys.current.keys();
+      keysPressed.clear();
       if (!allPressedKeys) return;
       Array.from(allPressedKeys).forEach((key) => {
         const mesh = pressedKeys.current.get(key);
@@ -200,7 +205,7 @@ const PianoModel = (props: JSX.IntrinsicElements["group"]) => {
     return () => {
       window.removeEventListener("focus", windowFocusLost);
     };
-  }, []);
+  }, [keysPressed]);
 
   useEffect(() => {
     const awaitSongs = async () => {
