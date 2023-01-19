@@ -4,6 +4,7 @@ import takeOnMeMidi2 from "assets/midis/takeOnMe2.mid";
 import neverGonnaGiveYouUpMidi from "assets/midis/neverGonnaGiveYouUp.mid";
 import tetMidi from "assets/midis/tet.mid";
 import skyrimMidi from "assets/midis/skyrim.mid";
+import whatIsLoveMidi from "assets/midis/whatIsLove.mid";
 import { midiToKey } from "./midiKeys";
 import { Note, noteToMesh, noteToOctaveIndex } from "views/piano/pianoKeys";
 import { Mesh } from "three";
@@ -22,8 +23,9 @@ const getSongs = async () => {
   const neverGonnaGiveYouUp = await Midi.fromUrl(neverGonnaGiveYouUpMidi);
   const tet = await Midi.fromUrl(tetMidi);
   const skyrim = await Midi.fromUrl(skyrimMidi);
+  const whatIsLove = await Midi.fromUrl(whatIsLoveMidi);
 
-  return { takeOnMe, takeOnMe2, neverGonnaGiveYouUp, tet, skyrim };
+  return { takeOnMe, takeOnMe2, neverGonnaGiveYouUp, tet, skyrim, whatIsLove };
 };
 
 const getSongData = (song: Midi, track: number) => {

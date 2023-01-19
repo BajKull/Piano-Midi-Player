@@ -203,7 +203,7 @@ const PianoModel = (props: JSX.IntrinsicElements["group"]) => {
 
     window.addEventListener("blur", windowFocusLost);
     return () => {
-      window.removeEventListener("focus", windowFocusLost);
+      window.removeEventListener("blur", windowFocusLost);
     };
   }, [keysPressed]);
 
@@ -211,7 +211,7 @@ const PianoModel = (props: JSX.IntrinsicElements["group"]) => {
     const awaitSongs = async () => {
       const songs = await getSongs();
       console.log(songs);
-      const songData = getSongData(songs.skyrim, 0);
+      const songData = getSongData(songs.whatIsLove, 0);
       // playSong({
       //   playKey,
       //   stopKey,
