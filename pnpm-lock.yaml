@@ -4,6 +4,7 @@ specifiers:
   '@next/font': 13.1.1
   '@react-three/drei': ^9.51.2
   '@react-three/fiber': ^8.10.0
+  '@react-three/postprocessing': ^2.7.0
   '@tonejs/midi': ^2.0.28
   '@types/howler': ^2.2.7
   '@types/node': 18.11.18
@@ -23,6 +24,7 @@ specifiers:
   sass: ^1.57.1
   tailwindcss: ^3.2.4
   three: ^0.148.0
+  three-stdlib: ^2.21.6
   typescript: 4.9.4
   url-loader: ^4.1.1
   use-sound: ^4.0.1
@@ -33,6 +35,7 @@ dependencies:
   '@next/font': 13.1.1
   '@react-three/drei': 9.51.2_xrskfjgmwd72lb724i4wvop5hq
   '@react-three/fiber': 8.10.0_4tzez3c2xpzuefjrvhpyy55bva
+  '@react-three/postprocessing': 2.7.0_gomtgsyi2ezk55nxt2bgusgpbu
   '@tonejs/midi': 2.0.28
   '@types/howler': 2.2.7
   '@types/node': 18.11.18
@@ -45,6 +48,7 @@ dependencies:
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   three: 0.148.0
+  three-stdlib: 2.21.6_three@0.148.0
   typescript: 4.9.4
   use-sound: 4.0.1_react@18.2.0
   zustand: 4.3.2_react@18.2.0
@@ -661,7 +665,7 @@ packages:
       suspend-react: 0.0.8_react@18.2.0
       three: 0.148.0
       three-mesh-bvh: 0.5.21_three@0.148.0
-      three-stdlib: 2.21.5_three@0.148.0
+      three-stdlib: 2.21.6_three@0.148.0
       troika-three-text: 0.47.1_three@0.148.0
       utility-types: 3.10.0
       zustand: 3.7.2_react@18.2.0
@@ -700,6 +704,22 @@ packages:
       suspend-react: 0.0.8_react@18.2.0
       three: 0.148.0
       zustand: 3.7.2_react@18.2.0
+    dev: false
+
+  /@react-three/postprocessing/2.7.0_gomtgsyi2ezk55nxt2bgusgpbu:
+    resolution: {integrity: sha512-lJfV8GYp+L1SlGRcl8QPUg9QMdO+8ojW2kfaEc/MuvoI4rX3TRhVd3qFjjF++0bBmzt8LeQpDHCOHFAaT3MNYA==}
+    peerDependencies:
+      '@react-three/fiber': '>=7.0'
+      react: '>=17.0'
+      three: '>=0.136.0'
+    dependencies:
+      '@react-three/fiber': 8.10.0_4tzez3c2xpzuefjrvhpyy55bva
+      postprocessing: 6.29.3_three@0.148.0
+      react: 18.2.0
+      react-merge-refs: 1.1.0
+      screen-space-reflections: 2.5.0_r3jd45lk6rq4u3k3fa3djjtth4
+      three: 0.148.0
+      three-stdlib: 2.21.6_three@0.148.0
     dev: false
 
   /@rushstack/eslint-patch/1.2.0:
@@ -2850,6 +2870,15 @@ packages:
       source-map-js: 1.0.2
     dev: true
 
+  /postprocessing/6.29.3_three@0.148.0:
+    resolution: {integrity: sha512-gxXC6LKLRwI4eSySdmxqEfQBMKEdQtxg5aYrdvJ/tPHDOS4aZAb/bY4ulQnL5YGKqCC6SmgNmU4dNIc68TTVMw==}
+    engines: {node: '>= 0.13.2'}
+    peerDependencies:
+      three: '>= 0.125.0 < 0.149.0'
+    dependencies:
+      three: 0.148.0
+    dev: false
+
   /potpack/1.0.2:
     resolution: {integrity: sha512-choctRBIV9EMT9WGAZHn3V7t0Z2pMQyl0EZE6pFc/6ml3ssw7Dlf/oAOvFwjm1HVsqfQN8GfeFyJ+d8tRzqueQ==}
     dev: false
@@ -3075,6 +3104,16 @@ packages:
       ajv: 6.12.6
       ajv-keywords: 3.5.2_ajv@6.12.6
     dev: true
+
+  /screen-space-reflections/2.5.0_r3jd45lk6rq4u3k3fa3djjtth4:
+    resolution: {integrity: sha512-fWSDMhJS0xwD3LTxRRch7Lb9NzxsR66sCmtDmAA7i+OGnghUrBBsrha85ng7StnCBaLq/BKmZ97dLxWd1XgWdQ==}
+    peerDependencies:
+      postprocessing: '>=6.28.0'
+      three: '>=0.141.0'
+    dependencies:
+      postprocessing: 6.29.3_three@0.148.0
+      three: 0.148.0
+    dev: false
 
   /semver/6.3.0:
     resolution: {integrity: sha512-b39TBaTSfV6yBrapU89p5fKekE2m/NwnDocOVruQFS1/veMgdzuPcnOM34M6CwxW8jH/lxEa5rBoDeUwu5HHTw==}
@@ -3348,8 +3387,8 @@ packages:
       three: 0.148.0
     dev: false
 
-  /three-stdlib/2.21.5_three@0.148.0:
-    resolution: {integrity: sha512-PzlbMFVApPjdFwNoTCnrH6r8J1rQw5Dn40qkHc8P+vVDj1czHOmCduYAA27bYwNNTcd+q3AWE+qutDrvvc5B2g==}
+  /three-stdlib/2.21.6_three@0.148.0:
+    resolution: {integrity: sha512-J3DyCVKIpYJw7TWG4mQKKPpMgswq4pRRPMtxgipKedpUj8e4EgGtNLt623ws9RHvphPPamTHXacaEzOrm3dFsA==}
     peerDependencies:
       three: '>=0.122.0'
     dependencies:

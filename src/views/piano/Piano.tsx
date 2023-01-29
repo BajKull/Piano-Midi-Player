@@ -8,9 +8,9 @@ import {
   Stage,
   useHelper,
 } from "@react-three/drei";
-import BloomEffect from "./BloomEffect";
 import { SpotLight, SpotLightHelper } from "three";
-import Lightning from "./Lightning";
+import Lightning from "../scene/Lightning";
+import Bloom from "../scene/Bloom";
 
 const Piano = () => {
   const cameraRef = useRef<PerspectiveCameraProps>();
@@ -25,6 +25,7 @@ const Piano = () => {
 
   return (
     <Canvas shadows className="h-full w-full">
+      <Bloom />
       <Lightning />
       <OrbitControls
         // enableZoom={false}
@@ -41,11 +42,9 @@ const Piano = () => {
         ref={cameraRef}
       />
       <Suspense fallback={null}>
-        <BloomEffect>
-          <Center>
-            <PianoModel />
-          </Center>
-        </BloomEffect>
+        <Center>
+          <PianoModel />
+        </Center>
       </Suspense>
     </Canvas>
   );

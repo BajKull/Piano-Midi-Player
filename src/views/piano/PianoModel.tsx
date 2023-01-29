@@ -211,14 +211,15 @@ const PianoModel = (props: JSX.IntrinsicElements["group"]) => {
     const awaitSongs = async () => {
       const songs = await getSongs();
       console.log(songs);
-      const songData = getSongData(songs.whatIsLove, 0);
-      // playSong({
-      //   playKey,
-      //   stopKey,
-      //   song: songData,
-      //   id: songIntervalTimer,
-      //   allKeys: allKeysRef,
-      // });
+      const songData = getSongData(songs.hesPirate, 0);
+      console.log(songData);
+      playSong({
+        playKey,
+        stopKey,
+        song: songData,
+        id: songIntervalTimer,
+        allKeys: allKeysRef,
+      });
     };
     awaitSongs();
   }, []);
@@ -749,7 +750,9 @@ const PianoModel = (props: JSX.IntrinsicElements["group"]) => {
         material={materials.GoldShiny}
         position={[-3.06, 1.63, -9.75]}
         rotation={[Math.PI / 2, 0.17, -Math.PI / 2]}
-      />
+      >
+        <meshBasicMaterial color={[255, 215, 0]} toneMapped={false} />
+      </mesh>
       <mesh
         castShadow
         receiveShadow
