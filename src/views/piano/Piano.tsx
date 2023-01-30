@@ -5,16 +5,141 @@ import { Center, PerspectiveCamera } from "@react-three/drei";
 import Lightning from "../scene/Lightning";
 import Bloom from "../scene/Bloom";
 import Controls from "views/scene/Controls";
+import { Group, Mesh } from "three";
+import { ThreeEvent } from "@react-three/fiber";
+import { keyToNote, Note, noteToMesh, sounds } from "./pianoKeys";
+
+import { getSongData, getSongs, playSong } from "midi/midiParser";
+import { useAppStore } from "store/store";
+
+type PressedKey = {
+  mesh: Mesh;
+  soundId: number;
+};
+
+const KEY_ROTATION_VALUE = Math.PI / 64;
 
 const Piano = () => {
   const cameraRef = useRef<PerspectiveCameraProps>();
 
+  const pressedKeys = useRef<Map<Note, PressedKey>>(new Map());
+  const pointerKeyPressed = useRef<Note | null>(null);
+  const allKeysRef = useRef<Group | null>(null);
+  const songIntervalTimer = useRef<NodeJS.Timer | null>(null);
+
+  const { keysPressed, volume } = useAppStore();
+
+  const volumeRef = useRef(volume);
+
+  const playKey = (key: Note, mesh: Mesh) => {
+    mesh.rotateZ(KEY_ROTATION_VALUE * -1);
+    const sound = sounds.get(key);
+    if (!sound) return;
+    sound.volume(volumeRef.current / 100 ?? 1);
+    const soundId = sound.play();
+    pressedKeys.current.set(key, { mesh, soundId });
+  };
+
+  const stopKey = (key: Note, mesh: Mesh) => {
+    const soundId = pressedKeys.current.get(key)?.soundId;
+    pressedKeys.current.delete(key);
+    mesh.rotateZ(KEY_ROTATION_VALUE);
+    const sound = sounds.get(key);
+    if (!sound) return;
+    sound.fade(sound.volume(), 0, 250, soundId);
+    sound.once("fade", () => sound.stop(soundId), soundId);
+  };
+
+  const handlePointerDown = (e: ThreeEvent<PointerEvent>, key: Note) => {
+    e.stopPropagation();
+    playKey(key, e.object as Mesh);
+    pointerKeyPressed.current = key;
+  };
+
   useEffect(() => {
-    const resize = (e: UIEvent) => {};
-    window.addEventListener("resize", resize);
-    return () => {
-      window.removeEventListener("resize", resize);
+    volumeRef.current = volume;
+  }, [volume]);
+
+  // handle pointer pressed
+  useEffect(() => {
+    const pointerUp = () => {
+      const pointerKey = pointerKeyPressed.current;
+      if (!pointerKey) return;
+      const mesh = pressedKeys.current.get(pointerKey);
+      if (!mesh) return;
+      stopKey(pointerKey, mesh.mesh);
     };
+
+    window.addEventListener("pointerup", pointerUp);
+    return () => {
+      window.removeEventListener("pointerup", pointerUp);
+    };
+  }, []);
+
+  // handle keyboard pressed
+  useEffect(() => {
+    const keyDown = (e: KeyboardEvent) => {
+      if (keysPressed.get(e.key)) return;
+      const note = keyToNote.get(e.key) as Note;
+      if (!note) return;
+      const mesh = noteToMesh(note, allKeysRef);
+      if (!mesh) return;
+      keysPressed.set(e.key, true);
+      playKey(note, mesh);
+    };
+    const keyUp = (e: KeyboardEvent) => {
+      const note = keyToNote.get(e.key) as Note;
+      if (!note) return;
+      const mesh = pressedKeys.current.get(note);
+      if (!mesh) return;
+      keysPressed.delete(e.key);
+      stopKey(note, mesh.mesh);
+    };
+    window.addEventListener("keydown", keyDown);
+    window.addEventListener("keyup", keyUp);
+
+    return () => {
+      window.removeEventListener("keydown", keyDown);
+      window.removeEventListener("keyup", keyUp);
+    };
+  }, [keysPressed]);
+
+  // stop all keys when tab looses focus
+  useEffect(() => {
+    const windowFocusLost = () => {
+      const allPressedKeys = pressedKeys.current.keys();
+      keysPressed.clear();
+      if (!allPressedKeys) return;
+      Array.from(allPressedKeys).forEach((key) => {
+        const mesh = pressedKeys.current.get(key);
+        if (!mesh) return;
+        stopKey(key, mesh.mesh);
+      });
+      const evt = new PointerEvent("pointerup");
+      window.dispatchEvent(evt);
+    };
+
+    window.addEventListener("blur", windowFocusLost);
+    return () => {
+      window.removeEventListener("blur", windowFocusLost);
+    };
+  }, [keysPressed]);
+
+  useEffect(() => {
+    const awaitSongs = async () => {
+      const songs = await getSongs();
+      console.log(songs);
+      const songData = getSongData(songs.hesPirate, 0);
+      console.log(songData);
+      playSong({
+        playKey,
+        stopKey,
+        song: songData,
+        id: songIntervalTimer,
+        allKeys: allKeysRef,
+      });
+    };
+    awaitSongs();
   }, []);
 
   return (
@@ -32,7 +157,10 @@ const Piano = () => {
       />
       <Suspense fallback={null}>
         <Center>
-          <PianoModel />
+          <PianoModel
+            allKeysRef={allKeysRef}
+            handlePointerDown={handlePointerDown}
+          />
         </Center>
       </Suspense>
     </Canvas>
