@@ -6,9 +6,9 @@ const VolumeSlider = () => {
   const { volume, setVolume } = useAppStore();
 
   return (
-    <div className="bg-slate-50 h-7 flex items-center justify-center rounded-full w-40 absolute -bottom-40 right-0 translate-x-14 px-4 -rotate-90 container-shadow">
+    <div className="bg-slate-50 h-7 flex items-center justify-center rounded-full w-40 absolute -bottom-40 right-0 translate-x-14 px-4 -rotate-90 container-shadow pointer-events-auto">
       <Range
-        className="w-full pointer-events-auto"
+        className="w-full "
         value={volume}
         onChange={(e) => setVolume(+e.target.value)}
       />
