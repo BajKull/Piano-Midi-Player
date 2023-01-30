@@ -1,16 +1,10 @@
 import React, { Suspense, useEffect, useRef } from "react";
 import { Canvas, PerspectiveCameraProps, useThree } from "@react-three/fiber";
 import PianoModel from "./PianoModel";
-import {
-  Center,
-  OrbitControls,
-  PerspectiveCamera,
-  Stage,
-  useHelper,
-} from "@react-three/drei";
-import { SpotLight, SpotLightHelper } from "three";
+import { Center, PerspectiveCamera } from "@react-three/drei";
 import Lightning from "../scene/Lightning";
 import Bloom from "../scene/Bloom";
+import Controls from "views/scene/Controls";
 
 const Piano = () => {
   const cameraRef = useRef<PerspectiveCameraProps>();
@@ -27,12 +21,7 @@ const Piano = () => {
     <Canvas shadows className="h-full w-full">
       <Bloom />
       <Lightning />
-      <OrbitControls
-        // enableZoom={false}
-        // enableRotate={false}
-        // enablePan={false}
-        target={[-3.35, 4.37, 0.02]}
-      />
+      <Controls />
       <PerspectiveCamera
         fov={60}
         position={[29.74, 22.78, 0.2]}

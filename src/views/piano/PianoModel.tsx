@@ -17,7 +17,7 @@ import {
 } from "./pianoKeys";
 
 import { getSongData, getSongs, playSong } from "midi/midiParser";
-import { useStore } from "store/store";
+import { useAppStore } from "store/store";
 
 const KEY_ROTATION_VALUE = Math.PI / 64;
 
@@ -115,7 +115,7 @@ const PianoModel = (props: JSX.IntrinsicElements["group"]) => {
   const allKeysRef = useRef<Group | null>(null);
   const songIntervalTimer = useRef<NodeJS.Timer | null>(null);
 
-  const { keysPressed } = useStore();
+  const { keysPressed } = useAppStore();
 
   const playKey = (key: Note, mesh: Mesh) => {
     console.log(key);

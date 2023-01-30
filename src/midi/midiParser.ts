@@ -33,7 +33,6 @@ const getSongs = async () => {
 };
 
 const getSongData = (song: Midi, track: number) => {
-  console.log(song);
   const songNotes = song.tracks[track].notes;
   if (!songNotes) return;
 
@@ -78,11 +77,9 @@ type PlaySong = {
 
 const playSong = ({ playKey, stopKey, song, id, allKeys }: PlaySong) => {
   if (!song) return;
-  console.log(song);
   let lastNoteIndex = 0;
   let currentTime = 0;
   const { events } = song;
-  console.log(song?.intervals[0].tick, song?.intervals[0].tick * 16);
   id.current = setInterval(() => {
     while (events[lastNoteIndex]?.start <= currentTime) {
       const mesh = noteToMesh(events[lastNoteIndex].note, allKeys);
