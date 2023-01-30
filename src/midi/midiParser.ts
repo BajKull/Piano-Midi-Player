@@ -68,7 +68,7 @@ const getSongData = (song: Midi, track: number) => {
 };
 
 type PlaySong = {
-  playKey: (key: Note, mesh: Mesh, volume: number) => void;
+  playKey: (key: Note, mesh: Mesh) => void;
   stopKey: (key: Note, mesh: Mesh) => void;
   song: ReturnType<typeof getSongData>;
   id: React.MutableRefObject<NodeJS.Timer | null>;
@@ -88,7 +88,7 @@ const playSong = ({ playKey, stopKey, song, id, allKeys }: PlaySong) => {
         continue;
       }
       if (events[lastNoteIndex].mode === "ON")
-        playKey(events[lastNoteIndex].note, mesh, 1);
+        playKey(events[lastNoteIndex].note, mesh);
       else stopKey(events[lastNoteIndex].note, mesh);
       lastNoteIndex++;
     }

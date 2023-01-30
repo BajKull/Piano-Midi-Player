@@ -1,7 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "components/button/Button";
 import React, { useEffect, useRef, useState } from "react";
-import classNames from "classnames";
 import { useAppStore } from "store/store";
 import {
   faVolumeHigh,
@@ -11,11 +10,17 @@ import {
   faMusic,
 } from "@fortawesome/free-solid-svg-icons";
 import VolumeSlider from "./VolumeSlider";
+import MidiPlayer from "views/midiPlayer/MidiPlayer";
 
 const Settings = () => {
   const [volumeMenuExpanded, setVolumeMenuExpanded] = useState(false);
-  const { volume, cameraControl, midiPanel, toggleCameraControl } =
-    useAppStore();
+  const {
+    volume,
+    cameraControl,
+    midiPanel,
+    toggleMidiPanel,
+    toggleCameraControl,
+  } = useAppStore();
 
   const volumeRef = useRef<HTMLDivElement | null>(null);
 
@@ -30,11 +35,14 @@ const Settings = () => {
 
   return (
     <nav className="absolute w-full h-10 bg-transparent z-10 flex pointer-events-none p-5">
+      {midiPanel && <MidiPlayer />}
       <section className="ml-auto flex">
         <Button
           className="pointer-events-auto w-12 h-12 rounded-full mr-5"
           title="Midi player"
           aria-label="Midi player"
+          onClick={() => toggleMidiPanel()}
+          active={midiPanel}
         >
           <FontAwesomeIcon icon={faMusic} size="2x" />
         </Button>
