@@ -20,7 +20,6 @@ const Button = ({
     "bg-indigo-50 hover:bg-indigo-100 container-shadow": !noBg && !active,
     "bg-transparent": noBg,
   });
-  console.log(active);
   return (
     <button className={clsButton} {...rest}>
       {children}
