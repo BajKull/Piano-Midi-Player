@@ -23,13 +23,7 @@ const getSongs = async () => {
   const whatIsLove = await Midi.fromUrl(whatIsLoveMidi);
   const hesPirate = await Midi.fromUrl(hesPirateMidi);
 
-  return {
-    takeOnMe,
-    neverGonnaGiveYouUp,
-    skyrim,
-    whatIsLove,
-    hesPirate,
-  };
+  return [takeOnMe, neverGonnaGiveYouUp, skyrim, whatIsLove, hesPirate];
 };
 
 const getSongData = (song: Midi, track: number) => {

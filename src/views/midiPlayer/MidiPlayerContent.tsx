@@ -7,10 +7,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "components/button/Button";
 import SearchBar from "components/searchBar/SearchBar";
 import Modal from "components/modal/Modal";
+import { getSongs } from "midi/midiParser";
+import MidiPlayerSongList from "./MidiPlayerSongList";
 
 const MidiPlayerContent = () => {
   const { toggleMidiPanel } = useAppStore();
   const [searchText, setSearchText] = useState("");
+
   return (
     <Modal closeFn={toggleMidiPanel}>
       <nav className="flex items-center border-b-2 border-indigo-100 pb-5">
@@ -26,10 +29,11 @@ const MidiPlayerContent = () => {
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             clearFn={() => setSearchText("")}
+            className="leading-6"
           />
         </div>
       </nav>
-      <h2>Play a song</h2>
+      <MidiPlayerSongList />
     </Modal>
   );
 };

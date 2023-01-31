@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useRef } from "react";
+import React, { Suspense, useCallback, useEffect, useRef } from "react";
 import { Canvas, PerspectiveCameraProps, useThree } from "@react-three/fiber";
 import PianoModel from "./PianoModel";
 import { Center, PerspectiveCamera } from "@react-three/drei";
@@ -27,18 +27,21 @@ const Piano = () => {
   const allKeysRef = useRef<Group | null>(null);
   const songIntervalTimer = useRef<NodeJS.Timer | null>(null);
 
-  const { keysPressed, volume } = useAppStore();
+  const { keysPressed, volume, midiPanel } = useAppStore();
 
   const volumeRef = useRef(volume);
 
-  const playKey = (key: Note, mesh: Mesh) => {
-    mesh.rotateZ(KEY_ROTATION_VALUE * -1);
-    const sound = sounds.get(key);
-    if (!sound) return;
-    sound.volume(volumeRef.current / 100 ?? 1);
-    const soundId = sound.play();
-    pressedKeys.current.set(key, { mesh, soundId });
-  };
+  const playKey = useCallback(
+    (key: Note, mesh: Mesh) => {
+      mesh.rotateZ(KEY_ROTATION_VALUE * -1);
+      const sound = sounds.get(key);
+      if (!sound) return;
+      sound.volume(volume / 100 ?? 1);
+      const soundId = sound.play();
+      pressedKeys.current.set(key, { mesh, soundId });
+    },
+    [volume]
+  );
 
   const stopKey = (key: Note, mesh: Mesh) => {
     const soundId = pressedKeys.current.get(key)?.soundId;
@@ -79,6 +82,7 @@ const Piano = () => {
   // handle keyboard pressed
   useEffect(() => {
     const keyDown = (e: KeyboardEvent) => {
+      if (midiPanel) return;
       if (keysPressed.get(e.key)) return;
       const note = keyToNote.get(e.key) as Note;
       if (!note) return;
@@ -88,6 +92,7 @@ const Piano = () => {
       playKey(note, mesh);
     };
     const keyUp = (e: KeyboardEvent) => {
+      if (midiPanel) return;
       const note = keyToNote.get(e.key) as Note;
       if (!note) return;
       const mesh = pressedKeys.current.get(note);
@@ -102,7 +107,7 @@ const Piano = () => {
       window.removeEventListener("keydown", keyDown);
       window.removeEventListener("keyup", keyUp);
     };
-  }, [keysPressed]);
+  }, [keysPressed, midiPanel, playKey]);
 
   // stop all keys when tab looses focus
   useEffect(() => {
@@ -124,23 +129,6 @@ const Piano = () => {
       window.removeEventListener("blur", windowFocusLost);
     };
   }, [keysPressed]);
-
-  useEffect(() => {
-    const awaitSongs = async () => {
-      const songs = await getSongs();
-      console.log(songs);
-      const songData = getSongData(songs.hesPirate, 0);
-      console.log(songData);
-      playSong({
-        playKey,
-        stopKey,
-        song: songData,
-        id: songIntervalTimer,
-        allKeys: allKeysRef,
-      });
-    };
-    awaitSongs();
-  }, []);
 
   return (
     <Canvas shadows className="h-full w-full">
