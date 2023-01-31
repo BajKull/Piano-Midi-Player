@@ -16,10 +16,11 @@ const Button = ({
   ...rest
 }: IButtonProps) => {
   const clsButton = classNames(className, "px-3 py-1 transition-colors", {
-    "bg-indigo-200 hover:bg-indigo-200": active && !noBg,
-    "bg-indigo-50 hover:bg-indigo-100 container-shadow": !noBg,
+    "bg-indigo-200 hover:bg-indigo-200 container-shadow": active && !noBg,
+    "bg-indigo-50 hover:bg-indigo-100 container-shadow": !noBg && !active,
     "bg-transparent": noBg,
   });
+  console.log(active);
   return (
     <button className={clsButton} {...rest}>
       {children}
