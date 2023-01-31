@@ -11,13 +11,13 @@ const Range = ({ children, className, ...rest }: IProps) => {
   const clsRange = classNames(
     className,
     cls.range,
-    "w-full h-1 rounded-lg appearance-none cursor-pointer range-sm accent-indigo-500"
+    "h-1 w-full cursor-pointer appearance-none rounded-lg accent-indigo-500"
   );
 
   return (
     <input
       type="range"
-      className={clsRange}
+      className="h-1 w-full cursor-pointer appearance-none rounded-lg accent-indigo-500"
       style={{
         background: `linear-gradient(to right, ${colors.indigo[600]} 0%, ${colors.indigo[500]} ${volume}%, ${colors.slate[200]} ${volume}%, ${colors.slate[200]} 100%`,
       }}

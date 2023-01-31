@@ -34,11 +34,11 @@ const Settings = () => {
   }, [setVolumeMenuExpanded]);
 
   return (
-    <nav className="absolute w-full h-10 bg-transparent z-10 flex pointer-events-none p-5">
+    <nav className="pointer-events-none absolute z-10 flex h-10 w-full bg-transparent p-5">
       {midiPanel && <MidiPlayer />}
       <section className="ml-auto flex">
         <Button
-          className="pointer-events-auto w-12 h-12 rounded-full mr-5"
+          className="pointer-events-auto mr-5 h-12 w-12 rounded-full"
           title="Midi player"
           aria-label="Midi player"
           onClick={() => toggleMidiPanel()}
@@ -47,7 +47,7 @@ const Settings = () => {
           <FontAwesomeIcon icon={faMusic} size="2x" />
         </Button>
         <Button
-          className="pointer-events-auto w-12 h-12 rounded-full mr-5"
+          className="pointer-events-auto mr-5 h-12 w-12 rounded-full"
           title="Camera controls"
           aria-label="Camera controls"
           onClick={() => toggleCameraControl()}
@@ -57,7 +57,7 @@ const Settings = () => {
         </Button>
         <div className="relative" ref={volumeRef}>
           <Button
-            className="pointer-events-auto w-12 h-12 rounded-full"
+            className="pointer-events-auto h-12 w-12 rounded-full"
             title="Volume"
             aria-label="Volume"
             onClick={() => setVolumeMenuExpanded(!volumeMenuExpanded)}

@@ -11,13 +11,13 @@ interface IProps extends React.InputHTMLAttributes<HTMLInputElement> {
 const SearchBar = ({ clearFn, ...props }: IProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const clsIcon = classNames(
-    "w-4 h-4 absolute top-1/2 right-3 -translate-y-1/2",
+    "absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2",
     { "cursor-text": !props.value, "cursor-pointer": props.value }
   );
   return (
     <div className="relative w-full">
       <input
-        className="w-full container-shadow bg-indigo-50 pr-8 py-2 rounded-full pl-3 text-sm"
+        className="container-shadow w-full rounded-full bg-indigo-50 py-2 pr-8 pl-3 text-sm"
         placeholder="Search..."
         ref={inputRef}
         {...props}

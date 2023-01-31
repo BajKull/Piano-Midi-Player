@@ -5,9 +5,9 @@ const noteKeys = ["a", "b", "c", "d", "e", "f", "g"] as const;
 const noteSharpKeys = ["a#", "c#", "d#", "f#", "g#"] as const;
 const noteValues = ["0", "1", "2", "3", "4"] as const;
 
-type Keys = typeof noteKeys[number];
-type SharpKeys = typeof noteSharpKeys[number];
-type Values = typeof noteValues[number];
+type Keys = (typeof noteKeys)[number];
+type SharpKeys = (typeof noteSharpKeys)[number];
+type Values = (typeof noteValues)[number];
 export type Note = `${Keys | SharpKeys}${Values}`;
 export type Sound = { name: Note; sound: Howl };
 

@@ -11,12 +11,12 @@ const MidiPlayerContent = () => {
   const { toggleMidiPanel } = useAppStore();
   const [searchText, setSearchText] = useState("");
   return (
-    <div className="relative w-full h-full">
+    <div className="relative h-full w-full">
       <nav className="flex items-center border-b-2 border-indigo-100 pb-5">
         <Button noBg title="Upload .mid file" aria-label="Upload .mid file">
           <FontAwesomeIcon icon={faCloudArrowUp} className="h-10 w-10" />
         </Button>
-        <div className="w-60 mx-5">
+        <div className="mx-5 w-60">
           <SearchBar
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
