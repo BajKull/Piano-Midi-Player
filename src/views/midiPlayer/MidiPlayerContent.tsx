@@ -6,15 +6,20 @@ import { faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "components/button/Button";
 import SearchBar from "components/searchBar/SearchBar";
+import Modal from "components/modal/Modal";
 
 const MidiPlayerContent = () => {
   const { toggleMidiPanel } = useAppStore();
   const [searchText, setSearchText] = useState("");
   return (
-    <div className="relative h-full w-full">
+    <Modal closeFn={toggleMidiPanel}>
       <nav className="flex items-center border-b-2 border-indigo-100 pb-5">
-        <Button noBg title="Upload .mid file" aria-label="Upload .mid file">
-          <FontAwesomeIcon icon={faCloudArrowUp} className="h-10 w-10" />
+        <Button
+          title="Upload .mid file"
+          aria-label="Upload .mid file"
+          className="rounded-lg"
+        >
+          <FontAwesomeIcon icon={faCloudArrowUp} className="h-8 w-8" />
         </Button>
         <div className="mx-5 w-60">
           <SearchBar
@@ -23,10 +28,9 @@ const MidiPlayerContent = () => {
             clearFn={() => setSearchText("")}
           />
         </div>
-        <CloseButton className="ml-auto" onClick={() => toggleMidiPanel()} />
       </nav>
       <h2>Play a song</h2>
-    </div>
+    </Modal>
   );
 };
 
