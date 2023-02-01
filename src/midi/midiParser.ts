@@ -5,7 +5,7 @@ import skyrimMidi from "assets/midis/skyrim.mid";
 import whatIsLoveMidi from "assets/midis/whatIsLove.mid";
 import hesPirateMidi from "assets/midis/hesPirate.mid";
 import { midiToKey } from "./midiKeys";
-import { Note, noteToMesh, noteToOctaveIndex } from "views/piano/pianoKeys";
+import { Note, noteToMesh } from "views/piano/pianoKeys";
 import { Mesh } from "three";
 
 type PianoEvent = {
@@ -23,7 +23,25 @@ const getSongs = async () => {
   const whatIsLove = await Midi.fromUrl(whatIsLoveMidi);
   const hesPirate = await Midi.fromUrl(hesPirateMidi);
 
-  return [takeOnMe, neverGonnaGiveYouUp, skyrim, whatIsLove, hesPirate];
+  const songs = [
+    { id: 1, song: takeOnMe, title: "Take On Me", author: "a-ha" },
+    {
+      id: 2,
+      song: neverGonnaGiveYouUp,
+      title: "Never Gonna Give You Up",
+      author: "Rick Astley",
+    },
+    {
+      id: 3,
+      song: skyrim,
+      title: "Skyrim (Main Theme)",
+      author: "Jeremy Soule",
+    },
+    { id: 4, song: whatIsLove, title: "What Is Love", author: "Haddaway" },
+    { id: 5, song: hesPirate, title: "He's a Pirate", author: "Hans Zimmer" },
+  ];
+
+  return songs;
 };
 
 const getSongData = (song: Midi, track: number) => {

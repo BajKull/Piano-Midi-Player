@@ -4,4 +4,19 @@
       rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px,
       rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
   }
+
+  .custom-scroll {
+    &::-webkit-scrollbar-track {
+      @apply my-5;
+    }
+    &::-webkit-scrollbar {
+      @apply w-[6px];
+    }
+    &::-webkit-scrollbar-thumb {
+      @apply rounded-full bg-indigo-500;
+      &:hover {
+        @apply bg-indigo-600;
+      }
+    }
+  }
 }

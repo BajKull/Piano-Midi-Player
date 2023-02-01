@@ -16,24 +16,32 @@ const MidiPlayerContent = () => {
 
   return (
     <Modal closeFn={toggleMidiPanel}>
-      <nav className="flex items-center border-b-2 border-indigo-100 pb-5">
-        <Button
-          title="Upload .mid file"
-          aria-label="Upload .mid file"
-          className="rounded-lg"
+      <div className="h-full w-full">
+        <nav className="mx-10 flex items-center border-b-2 border-indigo-100 pb-5">
+          <Button
+            title="Upload .mid file"
+            aria-label="Upload .mid file"
+            className="rounded-lg"
+          >
+            <FontAwesomeIcon icon={faCloudArrowUp} className="h-8 w-8" />
+          </Button>
+          <div className="mx-5 w-60">
+            <SearchBar
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              clearFn={() => setSearchText("")}
+              className="leading-6"
+            />
+          </div>
+          <CloseButton className="ml-auto" onClick={() => toggleMidiPanel()} />
+        </nav>
+        <div
+          className="custom-scroll overflow-auto px-5"
+          style={{ height: "calc(100% - 62px)" }}
         >
-          <FontAwesomeIcon icon={faCloudArrowUp} className="h-8 w-8" />
-        </Button>
-        <div className="mx-5 w-60">
-          <SearchBar
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            clearFn={() => setSearchText("")}
-            className="leading-6"
-          />
+          <MidiPlayerSongList />
         </div>
-      </nav>
-      <MidiPlayerSongList />
+      </div>
     </Modal>
   );
 };
