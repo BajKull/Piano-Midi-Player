@@ -14,6 +14,13 @@ type PianoEvent = {
   mode: "ON" | "OFF";
 };
 
+export type MidiWithId = {
+  id: number;
+  song: Midi;
+  title: string;
+  author: string;
+};
+
 const MINUTE_IN_MILISECONDS = 60000;
 
 const getSongs = async () => {
@@ -23,7 +30,7 @@ const getSongs = async () => {
   const whatIsLove = await Midi.fromUrl(whatIsLoveMidi);
   const hesPirate = await Midi.fromUrl(hesPirateMidi);
 
-  const songs = [
+  const songs: MidiWithId[] = [
     { id: 1, song: takeOnMe, title: "Take On Me", author: "a-ha" },
     {
       id: 2,

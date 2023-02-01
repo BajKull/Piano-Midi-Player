@@ -1,17 +1,10 @@
 import { Midi } from "@tonejs/midi";
 import SongCard from "components/songCard/SongCard";
-import { getSongs } from "midi/midiParser";
+import { getSongs, MidiWithId } from "midi/midiParser";
 import React, { useEffect, useState } from "react";
 import { faSortDown, faSortUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableHeader from "components/table/header/TableHeader";
-
-type MidiWithId = {
-  id: number;
-  song: Midi;
-  title: string;
-  author: string;
-};
 
 type MidiTableSort = {
   field: "title" | "author" | "duration";
@@ -90,8 +83,8 @@ const MidiPlayerSongList = () => {
         />
         <div className="basis-10" />
       </div>
-      {songList.sort(sortSongs).map(({ id, song, author, title }) => (
-        <SongCard key={id} song={song} author={author} title={title} />
+      {songList.sort(sortSongs).map((song) => (
+        <SongCard key={song.id} song={song} />
       ))}
     </div>
   );
