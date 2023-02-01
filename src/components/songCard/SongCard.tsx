@@ -12,24 +12,15 @@ import colors from "tailwindcss/colors";
 
 interface IProps extends React.HTMLAttributes<HTMLDivElement> {
   song: MidiWithId;
+  isFavorite: boolean;
+  toggleFavorite: () => void;
 }
 
-const SongCard = ({ song, ...props }: IProps) => {
-  const [favorites, setFavorites] = useLocalStorage<number[]>(
-    LOCAL_STORAGE_FAVORITES,
-    []
-  );
+const SongCard = ({ song, isFavorite, toggleFavorite, ...props }: IProps) => {
   const clsDiv = classNames(
     props.className,
     "flex w-full items-center rounded-lg p-5 hover:bg-indigo-100"
   );
-
-  const isFavorite = favorites.includes(song.id);
-
-  const toggleFavorite = () => {
-    if (isFavorite) setFavorites(favorites.filter((f) => f !== song.id));
-    else setFavorites([...favorites, song.id]);
-  };
 
   return (
     <div {...props} className={clsDiv}>
@@ -44,14 +35,14 @@ const SongCard = ({ song, ...props }: IProps) => {
       <div className="basis-10">
         <Button
           noBg
-          className="flex px-0"
+          className="flex w-10"
           title="Favorite"
           aria-label="Favorite"
           onClick={toggleFavorite}
         >
           <FontAwesomeIcon
             icon={faHeart}
-            className="h-5 w-5 hover:text-indigo-500"
+            className="hover:text-indigo-500"
             color={isFavorite ? colors.indigo[500] : undefined}
           />
         </Button>

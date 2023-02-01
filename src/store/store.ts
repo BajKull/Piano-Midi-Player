@@ -8,6 +8,8 @@ interface MidiPlaying {
 
 interface UserControls {
   keysPressed: Map<string, boolean>;
+  showFavorites: boolean;
+  toggleShowFavorites: () => void;
 }
 
 interface AppSettings {
@@ -33,6 +35,9 @@ const createUserControls: StateCreator<PianoStore, [], [], UserControls> = (
   set
 ) => ({
   keysPressed: new Map(),
+  showFavorites: false,
+  toggleShowFavorites: () =>
+    set((state) => ({ showFavorites: !state.showFavorites })),
 });
 
 const createAppSettings: StateCreator<PianoStore, [], [], AppSettings> = (

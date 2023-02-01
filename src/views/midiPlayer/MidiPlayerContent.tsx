@@ -2,7 +2,7 @@ import CloseButton from "components/button/closeButton/CloseButton";
 import Loading from "components/loading/Loading";
 import React, { useState } from "react";
 import { useAppStore } from "store/store";
-import { faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { faCloudArrowUp, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "components/button/Button";
 import SearchBar from "components/searchBar/SearchBar";
@@ -11,7 +11,7 @@ import { getSongs } from "midi/midiParser";
 import MidiPlayerSongList from "./MidiPlayerSongList";
 
 const MidiPlayerContent = () => {
-  const { toggleMidiPanel } = useAppStore();
+  const { toggleMidiPanel, showFavorites, toggleShowFavorites } = useAppStore();
   const [searchText, setSearchText] = useState("");
 
   return (
@@ -21,11 +21,20 @@ const MidiPlayerContent = () => {
           <Button
             title="Upload .mid file"
             aria-label="Upload .mid file"
-            className="rounded-lg"
+            className="mr-5 rounded-lg"
           >
             <FontAwesomeIcon icon={faCloudArrowUp} className="h-8 w-8" />
           </Button>
-          <div className="mx-5 w-60">
+          <Button
+            title="Show favorites"
+            aria-label="Show favorites"
+            className="mr-5 rounded-lg"
+            active={showFavorites}
+            onClick={() => toggleShowFavorites()}
+          >
+            <FontAwesomeIcon icon={faHeart} className="h-8 w-8" />
+          </Button>
+          <div className="w-60">
             <SearchBar
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
@@ -33,6 +42,7 @@ const MidiPlayerContent = () => {
               className="leading-6"
             />
           </div>
+
           <CloseButton className="ml-auto" onClick={() => toggleMidiPanel()} />
         </nav>
         <div

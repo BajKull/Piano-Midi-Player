@@ -5,6 +5,9 @@ import React, { useEffect, useState } from "react";
 import { faSortDown, faSortUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableHeader from "components/table/header/TableHeader";
+import { useAppStore } from "store/store";
+import useLocalStorage from "hooks/useLocalStorage";
+import { LOCAL_STORAGE_FAVORITES } from "constants/keys";
 
 type MidiTableSort = {
   field: "title" | "author" | "duration";
@@ -18,13 +21,17 @@ const MidiPlayerSongList = () => {
     how: "asc",
   });
 
+  const { showFavorites } = useAppStore();
+  const [favorites, setFavorites] = useLocalStorage<number[]>(
+    LOCAL_STORAGE_FAVORITES,
+    []
+  );
+
   useEffect(() => {
     const awaitSongs = async () => {
       const songs = await getSongs();
       setSongList(songs);
-      // console.log(songs);
       // const songData = getSongData(songs.hesPirate, 0);
-      // console.log(songData);
       // playSong({
       //   playKey,
       //   stopKey,
@@ -35,8 +42,6 @@ const MidiPlayerSongList = () => {
     };
     awaitSongs();
   }, []);
-
-  console.log(songList);
 
   const changeSort = (field: MidiTableSort["field"]) => {
     if (sort?.field === field) {
@@ -54,6 +59,19 @@ const MidiPlayerSongList = () => {
     }
     if (sort.how === "asc") return a[sort.field].localeCompare(b[sort.field]);
     return b[sort.field].localeCompare(a[sort.field]);
+  };
+
+  const filterFavorites = (song: MidiWithId) => {
+    if (!showFavorites) return true;
+    return favorites.includes(song.id);
+  };
+
+  const toggleFavorite = (id: number) => {
+    const isFavorite = favorites.includes(id);
+    return () => {
+      if (isFavorite) setFavorites(favorites.filter((f) => f !== id));
+      else setFavorites([...favorites, id]);
+    };
   };
 
   return (
@@ -83,9 +101,17 @@ const MidiPlayerSongList = () => {
         />
         <div className="basis-10" />
       </div>
-      {songList.sort(sortSongs).map((song) => (
-        <SongCard key={song.id} song={song} />
-      ))}
+      {songList
+        .filter(filterFavorites)
+        .sort(sortSongs)
+        .map((song) => (
+          <SongCard
+            key={song.id}
+            song={song}
+            isFavorite={favorites.includes(song.id)}
+            toggleFavorite={toggleFavorite(song.id)}
+          />
+        ))}
     </div>
   );
 };
