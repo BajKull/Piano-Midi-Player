@@ -32,7 +32,7 @@ const MidiPlayerContent = () => {
             active={showFavorites}
             onClick={() => toggleShowFavorites()}
           >
-            <FontAwesomeIcon icon={faHeart} className="h-8 w-8" />
+            <FontAwesomeIcon icon={faHeart} className="h-8 w-8 p-1" />
           </Button>
           <div className="w-60">
             <SearchBar

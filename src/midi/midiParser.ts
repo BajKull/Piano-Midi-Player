@@ -7,8 +7,10 @@ import hesPirateMidi from "assets/midis/hesPirate.mid";
 import { midiToKey } from "./midiKeys";
 import { Note, noteToMesh } from "views/piano/pianoKeys";
 import { Mesh } from "three";
+import { nanoid } from "nanoid";
 
 type PianoEvent = {
+  id: string;
   note: Note;
   start: number;
   mode: "ON" | "OFF";
@@ -62,18 +64,21 @@ const getSongData = (song: Midi, track: number) => {
   }));
 
   // start playing immidiately instead of waiting for first note
-  const timeOffset = songNotes[0].time;
+  const timeOffset = songNotes[0]?.time || 0;
 
   const events: PianoEvent[] = [];
   songNotes.forEach((noteData) => {
     const note = midiToKey(noteData.midi);
+    const id = nanoid();
     if (!note) return;
     events.push({
+      id,
       note,
       start: (noteData.time - timeOffset) * 1000,
       mode: "ON",
     });
     events.push({
+      id,
       note,
       start: (noteData.time + noteData.duration - timeOffset) * 1000,
       mode: "OFF",
@@ -86,33 +91,4 @@ const getSongData = (song: Midi, track: number) => {
   };
 };
 
-type PlaySong = {
-  playKey: (key: Note, mesh: Mesh) => void;
-  stopKey: (key: Note, mesh: Mesh) => void;
-  song: ReturnType<typeof getSongData>;
-  id: React.MutableRefObject<NodeJS.Timer | null>;
-  allKeys: React.MutableRefObject<THREE.Group | null>;
-};
-
-const playSong = ({ playKey, stopKey, song, id, allKeys }: PlaySong) => {
-  if (!song) return;
-  let lastNoteIndex = 0;
-  let currentTime = 0;
-  const { events } = song;
-  id.current = setInterval(() => {
-    while (events[lastNoteIndex]?.start <= currentTime) {
-      const mesh = noteToMesh(events[lastNoteIndex].note, allKeys);
-      if (!mesh) {
-        lastNoteIndex++;
-        continue;
-      }
-      if (events[lastNoteIndex].mode === "ON")
-        playKey(events[lastNoteIndex].note, mesh);
-      else stopKey(events[lastNoteIndex].note, mesh);
-      lastNoteIndex++;
-    }
-    currentTime += song?.intervals[0].tick * 16;
-  }, song?.intervals[0].tick * 16);
-};
-
-export { getSongs, getSongData, playSong };
+export { getSongs, getSongData };

@@ -1,6 +1,6 @@
 import { Midi } from "@tonejs/midi";
 import SongCard from "components/songCard/SongCard";
-import { getSongs, MidiWithId } from "midi/midiParser";
+import { getSongData, getSongs, MidiWithId } from "midi/midiParser";
 import React, { useEffect, useState } from "react";
 import { faSortDown, faSortUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,6 +8,7 @@ import TableHeader from "components/table/header/TableHeader";
 import { useAppStore } from "store/store";
 import useLocalStorage from "hooks/useLocalStorage";
 import { LOCAL_STORAGE_FAVORITES } from "constants/keys";
+import useSongActions from "hooks/useSongActions";
 
 type MidiTableSort = {
   field: "title" | "author" | "duration";
@@ -22,6 +23,7 @@ const MidiPlayerSongList = () => {
   });
 
   const { showFavorites } = useAppStore();
+  const { playSong } = useSongActions();
   const [favorites, setFavorites] = useLocalStorage<number[]>(
     LOCAL_STORAGE_FAVORITES,
     []
@@ -74,6 +76,14 @@ const MidiPlayerSongList = () => {
     };
   };
 
+  const playMidi = (song: Midi, track: number) => {
+    const songData = getSongData(song, track);
+
+    playSong({
+      song: songData,
+    });
+  };
+
   return (
     <div>
       <div className="flex py-5 px-5">
@@ -110,6 +120,7 @@ const MidiPlayerSongList = () => {
             song={song}
             isFavorite={favorites.includes(song.id)}
             toggleFavorite={toggleFavorite(song.id)}
+            playSong={playMidi}
           />
         ))}
     </div>

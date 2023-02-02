@@ -1,3 +1,5 @@
+import { createRef, useRef } from "react";
+import { Group } from "three";
 import { create, StateCreator } from "zustand";
 
 interface MidiPlaying {
@@ -21,9 +23,14 @@ interface AppSettings {
   toggleMidiPanel: () => void;
 }
 
-type PianoStore = MidiPlaying & UserControls & AppSettings;
+interface PianoKeys {
+  allKeysRef: React.MutableRefObject<Group | null>;
+  songIntervalTimer: React.MutableRefObject<NodeJS.Timer | null>;
+}
 
-const createMidiPlayingStore: StateCreator<PianoStore, [], [], MidiPlaying> = (
+type AppStore = MidiPlaying & UserControls & AppSettings & PianoKeys;
+
+const createMidiPlayingStore: StateCreator<AppStore, [], [], MidiPlaying> = (
   set
 ) => ({
   isMidiPlaying: false,
@@ -31,7 +38,7 @@ const createMidiPlayingStore: StateCreator<PianoStore, [], [], MidiPlaying> = (
   toggleIsMidiPlaying: () => set((state) => ({ isMidiPlaying: !state })),
 });
 
-const createUserControls: StateCreator<PianoStore, [], [], UserControls> = (
+const createUserControls: StateCreator<AppStore, [], [], UserControls> = (
   set
 ) => ({
   keysPressed: new Map(),
@@ -40,7 +47,7 @@ const createUserControls: StateCreator<PianoStore, [], [], UserControls> = (
     set((state) => ({ showFavorites: !state.showFavorites })),
 });
 
-const createAppSettings: StateCreator<PianoStore, [], [], AppSettings> = (
+const createAppSettings: StateCreator<AppStore, [], [], AppSettings> = (
   set
 ) => ({
   volume: 100,
@@ -52,8 +59,14 @@ const createAppSettings: StateCreator<PianoStore, [], [], AppSettings> = (
   toggleMidiPanel: () => set((state) => ({ midiPanel: !state.midiPanel })),
 });
 
-export const useAppStore = create<PianoStore>()((...a) => ({
+const createPianoKeys: StateCreator<AppStore, [], [], PianoKeys> = (set) => ({
+  allKeysRef: createRef<Group | null>(),
+  songIntervalTimer: createRef<NodeJS.Timer | null>(),
+});
+
+export const useAppStore = create<AppStore>()((...a) => ({
   ...createMidiPlayingStore(...a),
   ...createUserControls(...a),
   ...createAppSettings(...a),
+  ...createPianoKeys(...a),
 }));

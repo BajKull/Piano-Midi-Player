@@ -14,9 +14,16 @@ interface IProps extends React.HTMLAttributes<HTMLDivElement> {
   song: MidiWithId;
   isFavorite: boolean;
   toggleFavorite: () => void;
+  playSong: (id: Midi, track: number) => void;
 }
 
-const SongCard = ({ song, isFavorite, toggleFavorite, ...props }: IProps) => {
+const SongCard = ({
+  song,
+  isFavorite,
+  toggleFavorite,
+  playSong,
+  ...props
+}: IProps) => {
   const clsDiv = classNames(
     props.className,
     "flex w-full items-center rounded-lg p-5 hover:bg-indigo-100"
@@ -25,7 +32,13 @@ const SongCard = ({ song, isFavorite, toggleFavorite, ...props }: IProps) => {
   return (
     <div {...props} className={clsDiv}>
       <div className="basis-10">
-        <Button noBg className="flex px-0" title="Play" aria-label="Play">
+        <Button
+          noBg
+          className="flex px-0"
+          title="Play"
+          aria-label="Play"
+          onClick={() => playSong(song.song, 0)}
+        >
           <FontAwesomeIcon icon={faPlay} className="h-5 w-5" />
         </Button>
       </div>

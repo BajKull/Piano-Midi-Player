@@ -5,63 +5,50 @@ import { Center, PerspectiveCamera } from "@react-three/drei";
 import Lightning from "../scene/Lightning";
 import Bloom from "../scene/Bloom";
 import Controls from "views/scene/Controls";
-import { Group, Mesh } from "three";
+import { Mesh } from "three";
 import { ThreeEvent } from "@react-three/fiber";
 import { keyToNote, Note, noteToMesh, sounds } from "./pianoKeys";
-
-import { getSongData, getSongs, playSong } from "midi/midiParser";
 import { useAppStore } from "store/store";
+import useSongActions from "hooks/useSongActions";
 
 type PressedKey = {
   mesh: Mesh;
   soundId: number;
 };
 
-const KEY_ROTATION_VALUE = Math.PI / 64;
-
 const Piano = () => {
   const cameraRef = useRef<PerspectiveCameraProps>();
 
   const pressedKeys = useRef<Map<Note, PressedKey>>(new Map());
   const pointerKeyPressed = useRef<Note | null>(null);
-  const allKeysRef = useRef<Group | null>(null);
-  const songIntervalTimer = useRef<NodeJS.Timer | null>(null);
 
-  const { keysPressed, volume, midiPanel } = useAppStore();
+  const { keysPressed, midiPanel, allKeysRef } = useAppStore();
+  const { playKey, stopKey } = useSongActions();
 
-  const volumeRef = useRef(volume);
-
-  const playKey = useCallback(
+  const playUserKey = useCallback(
     (key: Note, mesh: Mesh) => {
-      mesh.rotateZ(KEY_ROTATION_VALUE * -1);
-      const sound = sounds.get(key);
-      if (!sound) return;
-      sound.volume(volume / 100 ?? 1);
-      const soundId = sound.play();
+      const soundId = playKey(key, mesh);
+      if (!soundId) return;
       pressedKeys.current.set(key, { mesh, soundId });
     },
-    [volume]
+    [playKey]
   );
 
-  const stopKey = (key: Note, mesh: Mesh) => {
-    const soundId = pressedKeys.current.get(key)?.soundId;
-    pressedKeys.current.delete(key);
-    mesh.rotateZ(KEY_ROTATION_VALUE);
-    const sound = sounds.get(key);
-    if (!sound) return;
-    sound.fade(sound.volume(), 0, 250, soundId);
-    sound.once("fade", () => sound.stop(soundId), soundId);
-  };
+  const stopUserKey = useCallback(
+    (key: Note, mesh: Mesh) => {
+      const soundId = pressedKeys.current.get(key)?.soundId;
+      pressedKeys.current.delete(key);
+      if (!soundId) return;
+      stopKey(key, mesh, soundId);
+    },
+    [stopKey]
+  );
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>, key: Note) => {
     e.stopPropagation();
-    playKey(key, e.object as Mesh);
+    playUserKey(key, e.object as Mesh);
     pointerKeyPressed.current = key;
   };
-
-  useEffect(() => {
-    volumeRef.current = volume;
-  }, [volume]);
 
   // handle pointer pressed
   useEffect(() => {
@@ -70,14 +57,14 @@ const Piano = () => {
       if (!pointerKey) return;
       const mesh = pressedKeys.current.get(pointerKey);
       if (!mesh) return;
-      stopKey(pointerKey, mesh.mesh);
+      stopUserKey(pointerKey, mesh.mesh);
     };
 
     window.addEventListener("pointerup", pointerUp);
     return () => {
       window.removeEventListener("pointerup", pointerUp);
     };
-  }, []);
+  }, [stopUserKey]);
 
   // handle keyboard pressed
   useEffect(() => {
@@ -89,7 +76,7 @@ const Piano = () => {
       const mesh = noteToMesh(note, allKeysRef);
       if (!mesh) return;
       keysPressed.set(e.key, true);
-      playKey(note, mesh);
+      playUserKey(note, mesh);
     };
     const keyUp = (e: KeyboardEvent) => {
       if (midiPanel) return;
@@ -98,7 +85,7 @@ const Piano = () => {
       const mesh = pressedKeys.current.get(note);
       if (!mesh) return;
       keysPressed.delete(e.key);
-      stopKey(note, mesh.mesh);
+      stopUserKey(note, mesh.mesh);
     };
     window.addEventListener("keydown", keyDown);
     window.addEventListener("keyup", keyUp);
@@ -107,7 +94,7 @@ const Piano = () => {
       window.removeEventListener("keydown", keyDown);
       window.removeEventListener("keyup", keyUp);
     };
-  }, [keysPressed, midiPanel, playKey]);
+  }, [allKeysRef, keysPressed, midiPanel, playUserKey, stopUserKey]);
 
   // stop all keys when tab looses focus
   useEffect(() => {
@@ -118,7 +105,7 @@ const Piano = () => {
       Array.from(allPressedKeys).forEach((key) => {
         const mesh = pressedKeys.current.get(key);
         if (!mesh) return;
-        stopKey(key, mesh.mesh);
+        stopUserKey(key, mesh.mesh);
       });
       const evt = new PointerEvent("pointerup");
       window.dispatchEvent(evt);
@@ -128,7 +115,7 @@ const Piano = () => {
     return () => {
       window.removeEventListener("blur", windowFocusLost);
     };
-  }, [keysPressed]);
+  }, [keysPressed, stopUserKey]);
 
   return (
     <Canvas shadows className="h-full w-full">
