@@ -5,16 +5,13 @@ import { numberToTime } from "./numberToTime";
 import { faHeart, faPlay } from "@fortawesome/free-solid-svg-icons";
 import classNames from "classnames";
 import Button from "components/button/Button";
-import useLocalStorage from "hooks/useLocalStorage";
-import { LOCAL_STORAGE_FAVORITES } from "constants/keys";
-import { MidiWithId } from "midi/midiParser";
+import { MidiMetadata, MidiWithId } from "midi/midiParser";
 import colors from "tailwindcss/colors";
-
 interface IProps extends React.HTMLAttributes<HTMLDivElement> {
   song: MidiWithId;
   isFavorite: boolean;
   toggleFavorite: () => void;
-  playSong: (id: Midi, track: number) => void;
+  playSong: (song: Midi, metaData: MidiMetadata, track: number) => void;
 }
 
 const SongCard = ({
@@ -31,13 +28,23 @@ const SongCard = ({
 
   return (
     <div {...props} className={clsDiv}>
-      <div className="basis-10">
+      <div className="min-w-[2.5rem] basis-10">
         <Button
           noBg
           className="flex px-0"
           title="Play"
           aria-label="Play"
-          onClick={() => playSong(song.song, 0)}
+          onClick={() =>
+            playSong(
+              song.song,
+              {
+                author: song.author,
+                duration: song.song.duration,
+                title: song.title,
+              },
+              0
+            )
+          }
         >
           <FontAwesomeIcon icon={faPlay} className="h-5 w-5" />
         </Button>
@@ -45,7 +52,7 @@ const SongCard = ({
       <p className="basis-1/2">{song.title}</p>
       <p className="basis-1/4">{song.author}</p>
       <p className="basis-1/4">{numberToTime(song.song.duration)}</p>
-      <div className="basis-10">
+      <div className="min-w-[2.5rem] basis-10">
         <Button
           noBg
           className="flex w-10"

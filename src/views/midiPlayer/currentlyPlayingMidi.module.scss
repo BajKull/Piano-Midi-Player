@@ -1,0 +1,14 @@
+@keyframes progressBar {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.progressBar {
+  animation-name: progressBar;
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
+}

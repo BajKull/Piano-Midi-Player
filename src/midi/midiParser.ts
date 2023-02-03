@@ -23,6 +23,10 @@ export type MidiWithId = {
   author: string;
 };
 
+export type MidiMetadata = Omit<MidiWithId, "song" | "id"> & {
+  duration: number;
+};
+
 const MINUTE_IN_MILISECONDS = 60000;
 
 const getSongs = async () => {

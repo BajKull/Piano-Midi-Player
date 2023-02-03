@@ -79,7 +79,6 @@ const Piano = () => {
       playUserKey(note, mesh);
     };
     const keyUp = (e: KeyboardEvent) => {
-      if (midiPanel) return;
       const note = keyToNote.get(e.key) as Note;
       if (!note) return;
       const mesh = pressedKeys.current.get(note);

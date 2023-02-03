@@ -1,6 +1,11 @@
 import { Midi } from "@tonejs/midi";
 import SongCard from "components/songCard/SongCard";
-import { getSongData, getSongs, MidiWithId } from "midi/midiParser";
+import {
+  getSongData,
+  getSongs,
+  MidiMetadata,
+  MidiWithId,
+} from "midi/midiParser";
 import React, { useEffect, useState } from "react";
 import { faSortDown, faSortUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -76,18 +81,19 @@ const MidiPlayerSongList = () => {
     };
   };
 
-  const playMidi = (song: Midi, track: number) => {
+  const playMidi = (song: Midi, metaData: MidiMetadata, track: number) => {
     const songData = getSongData(song, track);
 
     playSong({
       song: songData,
+      metaData,
     });
   };
 
   return (
     <div>
       <div className="flex py-5 px-5">
-        <div className="basis-10" />
+        <div className="min-w-[2.5rem] basis-10" />
         <TableHeader
           name="Song name"
           field="title"
@@ -109,7 +115,7 @@ const MidiPlayerSongList = () => {
           sort={sort}
           onClick={() => changeSort("duration")}
         />
-        <div className="basis-10" />
+        <div className="min-w-[2.5rem] basis-10" />
       </div>
       {songList
         .filter(filterFavorites)
