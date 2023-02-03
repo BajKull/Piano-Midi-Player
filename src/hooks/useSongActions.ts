@@ -1,3 +1,4 @@
+import { animate } from "framer-motion";
 import { getSongData, MidiMetadata } from "midi/midiParser";
 import { useAppStore } from "store/store";
 import { Mesh } from "three";
@@ -22,7 +23,10 @@ const useSongActions = () => {
   } = useAppStore();
 
   const playKey = (key: Note, mesh: Mesh) => {
-    mesh.rotateZ(KEY_ROTATION_VALUE * -1);
+    animate(0, -KEY_ROTATION_VALUE, {
+      duration: 0.1,
+      onUpdate: (val) => (mesh.rotation.z = val),
+    });
     const sound = sounds.get(key);
     if (!sound) return;
     sound.volume(volume / 100 ?? 1);
@@ -31,7 +35,10 @@ const useSongActions = () => {
   };
 
   const stopKey = (key: Note, mesh: Mesh, soundId: number) => {
-    mesh.rotateZ(KEY_ROTATION_VALUE);
+    animate(-KEY_ROTATION_VALUE, 0, {
+      duration: 0.1,
+      onUpdate: (val) => (mesh.rotation.z = val),
+    });
     const sound = sounds.get(key);
     if (!sound) return;
     sound.fade(sound.volume(), 0, 250, soundId);
