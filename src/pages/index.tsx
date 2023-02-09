@@ -1,11 +1,7 @@
 import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "@next/font/google";
 import Piano from "views/piano/Piano";
 import Settings from "views/ui/settings/Settings";
 import CurrentlyPlayingMidi from "views/midiPlayer/CurrentlyPlayingMidi";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   return (

@@ -1,15 +1,21 @@
-import { MidiMetadata } from "midi/midiParser";
+import { getSongData, MidiMetadata } from "midi/midiParser";
 import { createRef } from "react";
 import { Group } from "three";
 import { create, StateCreator } from "zustand";
 interface MidiPlaying {
   isMidiPlaying: boolean;
   setIsMidiPlaying: (v: boolean) => void;
-  toggleIsMidiPlaying: () => void;
   songPauseTime: number;
   setSongPauseTime: (v: number) => void;
   songMetaData?: MidiMetadata;
   setSongMetaData: (v?: MidiMetadata) => void;
+  songData?: ReturnType<typeof getSongData>;
+  setSongData: (v: ReturnType<typeof getSongData>) => void;
+  currentPlayingTime: React.MutableRefObject<number | null>;
+  lastNoteIndex: React.MutableRefObject<number | null>;
+}
+
+interface MidiPlayingTimestamp {
   songTimestamp: number;
   setSongTimestamp: (v: number) => void;
 }
@@ -36,18 +42,29 @@ interface PianoKeys {
 
 type AppStore = MidiPlaying & UserControls & AppSettings & PianoKeys;
 
+const createMidiPlayingTimestamp: StateCreator<
+  MidiPlayingTimestamp,
+  [],
+  [],
+  MidiPlayingTimestamp
+> = (set) => ({
+  songTimestamp: 0,
+  setSongTimestamp: (v) => set(() => ({ songTimestamp: v })),
+});
+
 const createMidiPlayingStore: StateCreator<AppStore, [], [], MidiPlaying> = (
   set
 ) => ({
   isMidiPlaying: false,
-  setIsMidiPlaying: (value) => set(() => ({ isMidiPlaying: value })),
-  toggleIsMidiPlaying: () => set((state) => ({ isMidiPlaying: !state })),
+  setIsMidiPlaying: (v) => set(() => ({ isMidiPlaying: v })),
   songPauseTime: 0,
   setSongPauseTime: (v) => set(() => ({ songPauseTime: v })),
   songMetaData: undefined,
   setSongMetaData: (v) => set(() => ({ songMetaData: v })),
-  songTimestamp: 0,
-  setSongTimestamp: (v) => set(() => ({ songTimestamp: v })),
+  songData: undefined,
+  setSongData: (v) => set(() => ({ songData: v })),
+  currentPlayingTime: createRef(),
+  lastNoteIndex: createRef(),
 });
 
 const createUserControls: StateCreator<AppStore, [], [], UserControls> = (
@@ -81,4 +98,8 @@ export const useAppStore = create<AppStore>()((...a) => ({
   ...createUserControls(...a),
   ...createAppSettings(...a),
   ...createPianoKeys(...a),
+}));
+
+export const useTimestampStore = create<MidiPlayingTimestamp>()((...a) => ({
+  ...createMidiPlayingTimestamp(...a),
 }));

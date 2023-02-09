@@ -1,15 +1,14 @@
 import { animate } from "framer-motion";
 import { getSongData, MidiMetadata } from "midi/midiParser";
-import { useAppStore } from "store/store";
+import { useAppStore, useTimestampStore } from "store/store";
 import { Mesh } from "three";
 import { Note, noteToMesh, sounds } from "views/piano/pianoKeys";
 
 const KEY_ROTATION_VALUE = Math.PI / 64;
+const ANIMATION_DURATION = 0.05;
 
 type PlaySong = {
   song: ReturnType<typeof getSongData>;
-  metaData: MidiMetadata;
-  startTime?: number;
 };
 
 const useSongActions = () => {
@@ -17,14 +16,19 @@ const useSongActions = () => {
     volume,
     allKeysRef,
     songIntervalTimer,
-    setIsMidiPlaying,
+    songData,
+    currentPlayingTime,
+    lastNoteIndex,
     setSongMetaData,
-    setSongTimestamp,
+    setIsMidiPlaying,
+    setSongData,
   } = useAppStore();
+
+  const setSongTimestamp = useTimestampStore((state) => state.setSongTimestamp);
 
   const playKey = (key: Note, mesh: Mesh) => {
     animate(0, -KEY_ROTATION_VALUE, {
-      duration: 0.1,
+      duration: ANIMATION_DURATION,
       onUpdate: (val) => (mesh.rotation.z = val),
     });
     const sound = sounds.get(key);
@@ -36,7 +40,7 @@ const useSongActions = () => {
 
   const stopKey = (key: Note, mesh: Mesh, soundId: number) => {
     animate(-KEY_ROTATION_VALUE, 0, {
-      duration: 0.1,
+      duration: ANIMATION_DURATION,
       onUpdate: (val) => (mesh.rotation.z = val),
     });
     const sound = sounds.get(key);
@@ -45,41 +49,48 @@ const useSongActions = () => {
     sound.once("fade", () => sound.stop(soundId), soundId);
   };
 
-  const playSong = ({ song, startTime, metaData }: PlaySong) => {
+  const playSong = ({ song }: PlaySong) => {
     if (!song) return;
     setIsMidiPlaying(true);
-    setSongMetaData(metaData);
-    let lastNoteIndex = 0;
-    let currentTime = startTime || 0;
+    const { events } = song;
     const intervalTime = song?.intervals[0].tick * 16;
     const interval = intervalTime < 10 ? 10 : intervalTime;
-    const { events } = song;
     const soundEventMap = new Map();
+    if (!lastNoteIndex.current) lastNoteIndex.current = 0;
     songIntervalTimer.current = setInterval(() => {
-      if (!events[lastNoteIndex]) return stopSong();
-      while (events[lastNoteIndex]?.start <= currentTime) {
-        const mesh = noteToMesh(events[lastNoteIndex].note, allKeysRef);
+      if (!events[lastNoteIndex.current!]) return stopSong();
+      while (
+        events[lastNoteIndex.current!]?.start <=
+        (currentPlayingTime.current || 0)
+      ) {
+        const mesh = noteToMesh(
+          events[lastNoteIndex.current!].note,
+          allKeysRef
+        );
         if (!mesh) {
-          lastNoteIndex++;
+          lastNoteIndex.current!++;
           continue;
         }
-        if (events[lastNoteIndex].mode === "ON") {
-          const soundId = playKey(events[lastNoteIndex].note, mesh);
-          soundEventMap.set(events[lastNoteIndex].id, soundId);
+        if (events[lastNoteIndex.current!].mode === "ON") {
+          const soundId = playKey(events[lastNoteIndex.current!].note, mesh);
+          soundEventMap.set(events[lastNoteIndex.current!].id, soundId);
         } else {
-          const soundId = soundEventMap.get(events[lastNoteIndex].id);
-          stopKey(events[lastNoteIndex].note, mesh, soundId);
-          soundEventMap.delete(events[lastNoteIndex].id);
+          const soundId = soundEventMap.get(events[lastNoteIndex.current!].id);
+          stopKey(events[lastNoteIndex.current!].note, mesh, soundId);
+          soundEventMap.delete(events[lastNoteIndex.current!].id);
         }
-        lastNoteIndex++;
+        lastNoteIndex.current!++;
       }
-      currentTime += interval;
-      if (currentTime % 1000 < interval)
-        setSongTimestamp(Math.floor(currentTime / 1000));
+      currentPlayingTime.current
+        ? (currentPlayingTime.current += interval)
+        : (currentPlayingTime.current = interval);
+      if (currentPlayingTime.current % 1000 < interval)
+        setSongTimestamp(Math.floor(currentPlayingTime.current) / 1000);
     }, interval);
   };
 
   const pauseSong = () => {
+    setIsMidiPlaying(false);
     if (songIntervalTimer.current) clearInterval(songIntervalTimer.current);
   };
 
@@ -87,12 +98,18 @@ const useSongActions = () => {
     setIsMidiPlaying(false);
     setSongTimestamp(0);
     setSongMetaData(undefined);
+    setSongData(undefined);
+    currentPlayingTime.current = 0;
+    lastNoteIndex.current = 0;
     if (songIntervalTimer.current) clearInterval(songIntervalTimer.current);
   };
 
-  const resumeSong = () => {};
+  const resumeSong = () => {
+    if (!songData) return;
+    playSong({ song: songData });
+  };
 
-  return { playKey, stopKey, playSong };
+  return { playKey, pauseSong, stopKey, resumeSong, playSong };
 };
 
 export default useSongActions;

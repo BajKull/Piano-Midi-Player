@@ -30,31 +30,37 @@ export type MidiMetadata = Omit<MidiWithId, "song" | "id"> & {
 const MINUTE_IN_MILISECONDS = 60000;
 
 const getSongs = async () => {
-  const takeOnMe = await Midi.fromUrl(takeOnMeMidi);
-  const neverGonnaGiveYouUp = await Midi.fromUrl(neverGonnaGiveYouUpMidi);
-  const skyrim = await Midi.fromUrl(skyrimMidi);
-  const whatIsLove = await Midi.fromUrl(whatIsLoveMidi);
-  const hesPirate = await Midi.fromUrl(hesPirateMidi);
+  const takeOnMe = Midi.fromUrl(takeOnMeMidi);
+  const neverGonnaGiveYouUp = Midi.fromUrl(neverGonnaGiveYouUpMidi);
+  const skyrim = Midi.fromUrl(skyrimMidi);
+  const whatIsLove = Midi.fromUrl(whatIsLoveMidi);
+  const hesPirate = Midi.fromUrl(hesPirateMidi);
 
-  const songs: MidiWithId[] = [
-    { id: 1, song: takeOnMe, title: "Take On Me", author: "a-ha" },
-    {
-      id: 2,
-      song: neverGonnaGiveYouUp,
-      title: "Never Gonna Give You Up",
-      author: "Rick Astley",
-    },
-    {
-      id: 3,
-      song: skyrim,
-      title: "Skyrim (Main Theme)",
-      author: "Jeremy Soule",
-    },
-    { id: 4, song: whatIsLove, title: "What Is Love", author: "Haddaway" },
-    { id: 5, song: hesPirate, title: "He's a Pirate", author: "Hans Zimmer" },
-  ];
+  const midis = [takeOnMe, neverGonnaGiveYouUp, skyrim, whatIsLove, hesPirate];
 
-  return songs;
+  const songsPromise = await Promise.all(midis).then((data) => {
+    const [takeOnMe, neverGonnaGiveYouUp, skyrim, whatIsLove, hesPirate] = data;
+    const songs: MidiWithId[] = [
+      { id: 1, song: takeOnMe, title: "Take On Me", author: "a-ha" },
+      {
+        id: 2,
+        song: neverGonnaGiveYouUp,
+        title: "Never Gonna Give You Up",
+        author: "Rick Astley",
+      },
+      {
+        id: 3,
+        song: skyrim,
+        title: "Skyrim (Main Theme)",
+        author: "Jeremy Soule",
+      },
+      { id: 4, song: whatIsLove, title: "What Is Love", author: "Haddaway" },
+      { id: 5, song: hesPirate, title: "He's a Pirate", author: "Hans Zimmer" },
+    ];
+    return songs;
+  });
+
+  return songsPromise;
 };
 
 const getSongData = (song: Midi, track: number) => {

@@ -6,9 +6,7 @@ import {
   MidiMetadata,
   MidiWithId,
 } from "midi/midiParser";
-import React, { useEffect, useState } from "react";
-import { faSortDown, faSortUp } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useCallback, useEffect, useState } from "react";
 import TableHeader from "components/table/header/TableHeader";
 import { useAppStore } from "store/store";
 import useLocalStorage from "hooks/useLocalStorage";
@@ -27,7 +25,7 @@ const MidiPlayerSongList = () => {
     how: "asc",
   });
 
-  const { showFavorites } = useAppStore();
+  const { showFavorites, setSongMetaData, setSongData } = useAppStore();
   const { playSong } = useSongActions();
   const [favorites, setFavorites] = useLocalStorage<number[]>(
     LOCAL_STORAGE_FAVORITES,
@@ -38,14 +36,6 @@ const MidiPlayerSongList = () => {
     const awaitSongs = async () => {
       const songs = await getSongs();
       setSongList(songs);
-      // const songData = getSongData(songs.hesPirate, 0);
-      // playSong({
-      //   playKey,
-      //   stopKey,
-      //   song: songData,
-      //   id: songIntervalTimer,
-      //   allKeys: allKeysRef,
-      // });
     };
     awaitSongs();
   }, []);
@@ -83,11 +73,9 @@ const MidiPlayerSongList = () => {
 
   const playMidi = (song: Midi, metaData: MidiMetadata, track: number) => {
     const songData = getSongData(song, track);
-
-    playSong({
-      song: songData,
-      metaData,
-    });
+    playSong({ song: songData });
+    setSongMetaData(metaData);
+    setSongData(songData);
   };
 
   return (
