@@ -25,8 +25,9 @@ const MidiPlayerSongList = () => {
     how: "asc",
   });
 
-  const { showFavorites, setSongMetaData, setSongData } = useAppStore();
-  const { playSong } = useSongActions();
+  const { showFavorites, isMidiPlaying, setSongMetaData, setSongData } =
+    useAppStore();
+  const { playSong, stopSong } = useSongActions();
   const [favorites, setFavorites] = useLocalStorage<number[]>(
     LOCAL_STORAGE_FAVORITES,
     []
@@ -72,6 +73,7 @@ const MidiPlayerSongList = () => {
   };
 
   const playMidi = (song: Midi, metaData: MidiMetadata, track: number) => {
+    if (isMidiPlaying) stopSong();
     const songData = getSongData(song, track);
     playSong({ song: songData });
     setSongMetaData(metaData);

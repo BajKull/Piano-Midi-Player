@@ -109,7 +109,7 @@ const useSongActions = () => {
     playSong({ song: songData });
   };
 
-  return { playKey, pauseSong, stopKey, resumeSong, playSong };
+  return { playKey, pauseSong, stopKey, resumeSong, playSong, stopSong };
 };
 
 export default useSongActions;
