@@ -1,6 +1,7 @@
 import { getSongData, MidiMetadata } from "midi/midiParser";
 import { createRef } from "react";
-import { Group } from "three";
+import { Group, Mesh } from "three";
+import { Note } from "views/piano/pianoKeys";
 import { create, StateCreator } from "zustand";
 interface MidiPlaying {
   isMidiPlaying: boolean;
@@ -21,7 +22,7 @@ interface MidiPlayingTimestamp {
 }
 
 interface UserControls {
-  keysPressed: Map<string, boolean>;
+  keysPressed: Map<Note, { soundId: number; mesh: Mesh }>;
   showFavorites: boolean;
   toggleShowFavorites: () => void;
 }

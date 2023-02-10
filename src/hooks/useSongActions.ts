@@ -18,6 +18,7 @@ const useSongActions = () => {
     songIntervalTimer,
     songData,
     currentPlayingTime,
+    keysPressed,
     lastNoteIndex,
     setSongMetaData,
     setIsMidiPlaying,
@@ -35,6 +36,7 @@ const useSongActions = () => {
     if (!sound) return;
     sound.volume(volume / 100 ?? 1);
     const soundId = sound.play();
+    keysPressed.set(key, { soundId, mesh });
     return soundId;
   };
 
@@ -45,8 +47,15 @@ const useSongActions = () => {
     });
     const sound = sounds.get(key);
     if (!sound) return;
+    keysPressed.delete(key);
     sound.fade(sound.volume(), 0, 250, soundId);
     sound.once("fade", () => sound.stop(soundId), soundId);
+  };
+
+  const stopAllKeys = () => {
+    keysPressed.forEach((keyPressed, key) => {
+      stopKey(key, keyPressed.mesh, keyPressed.soundId);
+    });
   };
 
   const playSong = ({ song }: PlaySong) => {
@@ -91,6 +100,7 @@ const useSongActions = () => {
 
   const pauseSong = () => {
     setIsMidiPlaying(false);
+    stopAllKeys();
     if (songIntervalTimer.current) clearInterval(songIntervalTimer.current);
   };
 
@@ -99,6 +109,7 @@ const useSongActions = () => {
     setSongTimestamp(0);
     setSongMetaData(undefined);
     setSongData(undefined);
+    stopAllKeys();
     currentPlayingTime.current = 0;
     lastNoteIndex.current = 0;
     if (songIntervalTimer.current) clearInterval(songIntervalTimer.current);
@@ -109,7 +120,15 @@ const useSongActions = () => {
     playSong({ song: songData });
   };
 
-  return { playKey, pauseSong, stopKey, resumeSong, playSong, stopSong };
+  return {
+    playKey,
+    pauseSong,
+    stopKey,
+    resumeSong,
+    playSong,
+    stopSong,
+    stopAllKeys,
+  };
 };
 
 export default useSongActions;

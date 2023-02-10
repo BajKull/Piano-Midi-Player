@@ -15,7 +15,6 @@ const CurrentlyPlayingMidi = () => {
   const { songTimestamp } = useTimestampStore();
   const controls = useDragControls();
   const { pauseSong, resumeSong } = useSongActions();
-  console.log(isMidiPlaying);
 
   const progressBarCls = classNames(
     cls.progressBar,
@@ -65,6 +64,7 @@ const CurrentlyPlayingMidi = () => {
             </p>
             <div className="relative mx-2 h-1 flex-1 overflow-hidden rounded-full bg-indigo-200">
               <div
+                key={songMetaData.title + songMetaData.duration}
                 className={progressBarCls}
                 style={{
                   animationDuration: `${songMetaData.duration}s`,
