@@ -7,9 +7,9 @@ import { Note, noteToMesh, sounds } from "views/piano/pianoKeys";
 const KEY_ROTATION_VALUE = Math.PI / 64;
 const ANIMATION_DURATION = 0.05;
 
-type PlaySong = {
-  song: ReturnType<typeof getSongData>;
-};
+type PlaySong = { song: ReturnType<typeof getSongData> };
+type PlayKey = { note: Note; mesh: Mesh };
+type StopKey = { note: Note; mesh: Mesh; soundId: number; fadeTime?: number };
 
 const useSongActions = () => {
   const {
@@ -27,34 +27,34 @@ const useSongActions = () => {
 
   const setSongTimestamp = useTimestampStore((state) => state.setSongTimestamp);
 
-  const playKey = (key: Note, mesh: Mesh) => {
+  const playKey = ({ note, mesh }: PlayKey) => {
     animate(0, -KEY_ROTATION_VALUE, {
       duration: ANIMATION_DURATION,
       onUpdate: (val) => (mesh.rotation.z = val),
     });
-    const sound = sounds.get(key);
+    const sound = sounds.get(note);
     if (!sound) return;
     sound.volume(volume / 100 ?? 1);
     const soundId = sound.play();
-    keysPressed.set(key, { soundId, mesh });
+    keysPressed.set(note, { soundId, mesh });
     return soundId;
   };
 
-  const stopKey = (key: Note, mesh: Mesh, soundId: number) => {
+  const stopKey = ({ note, mesh, soundId, fadeTime }: StopKey) => {
     animate(-KEY_ROTATION_VALUE, 0, {
       duration: ANIMATION_DURATION,
       onUpdate: (val) => (mesh.rotation.z = val),
     });
-    const sound = sounds.get(key);
+    const sound = sounds.get(note);
     if (!sound) return;
-    keysPressed.delete(key);
-    sound.fade(sound.volume(), 0, 250, soundId);
+    keysPressed.delete(note);
+    sound.fade(sound.volume(), 0, fadeTime || 250, soundId);
     sound.once("fade", () => sound.stop(soundId), soundId);
   };
 
   const stopAllKeys = () => {
-    keysPressed.forEach((keyPressed, key) => {
-      stopKey(key, keyPressed.mesh, keyPressed.soundId);
+    keysPressed.forEach((keyPressed, note) => {
+      stopKey({ note, mesh: keyPressed.mesh, soundId: keyPressed.soundId });
     });
   };
 
@@ -81,11 +81,14 @@ const useSongActions = () => {
           continue;
         }
         if (events[lastNoteIndex.current!].mode === "ON") {
-          const soundId = playKey(events[lastNoteIndex.current!].note, mesh);
+          const soundId = playKey({
+            note: events[lastNoteIndex.current!].note,
+            mesh,
+          });
           soundEventMap.set(events[lastNoteIndex.current!].id, soundId);
         } else {
           const soundId = soundEventMap.get(events[lastNoteIndex.current!].id);
-          stopKey(events[lastNoteIndex.current!].note, mesh, soundId);
+          stopKey({ note: events[lastNoteIndex.current!].note, mesh, soundId });
           soundEventMap.delete(events[lastNoteIndex.current!].id);
         }
         lastNoteIndex.current!++;

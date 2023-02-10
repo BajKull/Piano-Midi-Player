@@ -25,7 +25,7 @@ const Piano = () => {
   const handlePointerDown = (e: ThreeEvent<PointerEvent>, note: Note) => {
     e.stopPropagation();
     const mesh = e.object as Mesh;
-    const soundId = playKey(note, mesh);
+    const soundId = playKey({ note, mesh });
     if (!soundId) return;
     pointerKeyPressed.current = { note, mesh, soundId };
   };
@@ -35,7 +35,7 @@ const Piano = () => {
     const pointerUp = () => {
       const pointerKey = pointerKeyPressed.current;
       if (!pointerKey) return;
-      stopKey(pointerKey.note, pointerKey.mesh, pointerKey.soundId);
+      stopKey({ ...pointerKey });
     };
 
     window.addEventListener("pointerup", pointerUp);
@@ -53,14 +53,14 @@ const Piano = () => {
       if (!note) return;
       const mesh = noteToMesh(note, allKeysRef);
       if (!mesh) return;
-      playKey(note, mesh);
+      playKey({ note, mesh });
     };
     const keyUp = (e: KeyboardEvent) => {
       const note = keyToNote.get(e.key) as Note;
       if (!note) return;
-      const mesh = keysPressed.get(note);
-      if (!mesh) return;
-      stopKey(note, mesh.mesh, mesh.soundId);
+      const key = keysPressed.get(note);
+      if (!key) return;
+      stopKey({ note, mesh: key.mesh, soundId: key.soundId });
     };
     window.addEventListener("keydown", keyDown);
     window.addEventListener("keyup", keyUp);

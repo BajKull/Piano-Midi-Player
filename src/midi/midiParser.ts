@@ -95,6 +95,8 @@ const getSongData = (song: Midi, track: number) => {
     });
   });
 
+  console.log(events);
+
   return {
     intervals,
     events: events.sort((a, b) => a.start - b.start),
