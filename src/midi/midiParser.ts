@@ -6,7 +6,7 @@ import whatIsLoveMidi from "assets/midis/whatIsLove.mid";
 import hesPirateMidi from "assets/midis/hesPirate.mid";
 import throughFireAndFlamesMidi from "assets/midis/throughFireAndFlames.mid";
 import { midiToKey } from "./midiKeys";
-import { Note, noteToMesh } from "views/piano/pianoKeys";
+import { Note } from "views/piano/pianoKeys";
 import { nanoid } from "nanoid";
 
 type PianoEvent = {
@@ -54,6 +54,7 @@ const getSongs = async () => {
       whatIsLove,
       hesPirate,
       throughFireAndFlames,
+      notesTest,
     ] = data;
     const songs: MidiWithId[] = [
       { id: 1, song: takeOnMe, title: "Take On Me", author: "a-ha" },
@@ -99,22 +100,38 @@ const getSongData = (song: Midi, track: number) => {
   const timeOffset = songNotes[0]?.time || 0;
 
   const events: PianoEvent[] = [];
+  const noteStartingTime = new Map<Note, number>();
+  const noteEndingTime = new Map<Note, { id: string; endTime: number }>();
   songNotes.forEach((noteData) => {
     const note = midiToKey(noteData.midi);
     const id = nanoid();
+    const noteStartTime = (noteData.time - timeOffset) * 1000;
+    const noteEndTime = (noteData.time + noteData.duration - timeOffset) * 1000;
     if (!note) return;
+
+    const noteInMap = noteEndingTime.get(note);
+    if (noteStartingTime.get(note) === noteStartTime) return;
+    if (noteInMap && noteInMap.endTime >= noteStartTime) {
+      const indexToEdit = events.findIndex(
+        (el) => el.id === noteInMap.id && el.mode === "OFF"
+      );
+      events[indexToEdit].start = noteStartTime;
+    }
+
     events.push({
       id,
       note,
-      start: (noteData.time - timeOffset) * 1000,
+      start: noteStartTime,
       mode: "ON",
     });
     events.push({
       id,
       note,
-      start: (noteData.time + noteData.duration - timeOffset) * 1000,
+      start: noteEndTime,
       mode: "OFF",
     });
+    noteStartingTime.set(note, noteStartTime);
+    noteEndingTime.set(note, { id, endTime: noteEndTime });
   });
 
   console.log(events);
