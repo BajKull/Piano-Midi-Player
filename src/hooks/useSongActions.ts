@@ -34,8 +34,9 @@ const useSongActions = () => {
     });
     const sound = sounds.get(note);
     if (!sound) return;
-    sound.volume(volume / 100 ?? 1);
     const soundId = sound.play();
+    sound.volume(volume / 100 ?? 1, soundId);
+    console.log(note, soundId, volume / 100 ?? 1);
     keysPressed.set(note, { soundId, mesh });
     return soundId;
   };
@@ -48,7 +49,14 @@ const useSongActions = () => {
     const sound = sounds.get(note);
     if (!sound) return;
     keysPressed.delete(note);
-    sound.fade(sound.volume(), 0, fadeTime || 250, soundId);
+    console.log(
+      note,
+      sound.playing(soundId),
+      sound.volume(),
+      fadeTime || 50,
+      soundId
+    );
+    sound.fade(1, 0, fadeTime || 250, soundId);
     sound.once("fade", () => sound.stop(soundId), soundId);
   };
 

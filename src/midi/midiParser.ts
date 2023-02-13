@@ -4,9 +4,9 @@ import neverGonnaGiveYouUpMidi from "assets/midis/neverGonnaGiveYouUp.mid";
 import skyrimMidi from "assets/midis/skyrim.mid";
 import whatIsLoveMidi from "assets/midis/whatIsLove.mid";
 import hesPirateMidi from "assets/midis/hesPirate.mid";
+import throughFireAndFlamesMidi from "assets/midis/throughFireAndFlames.mid";
 import { midiToKey } from "./midiKeys";
 import { Note, noteToMesh } from "views/piano/pianoKeys";
-import { Mesh } from "three";
 import { nanoid } from "nanoid";
 
 type PianoEvent = {
@@ -35,11 +35,26 @@ const getSongs = async () => {
   const skyrim = Midi.fromUrl(skyrimMidi);
   const whatIsLove = Midi.fromUrl(whatIsLoveMidi);
   const hesPirate = Midi.fromUrl(hesPirateMidi);
+  const throughFireAndFlames = Midi.fromUrl(throughFireAndFlamesMidi);
 
-  const midis = [takeOnMe, neverGonnaGiveYouUp, skyrim, whatIsLove, hesPirate];
+  const midis = [
+    takeOnMe,
+    neverGonnaGiveYouUp,
+    skyrim,
+    whatIsLove,
+    hesPirate,
+    throughFireAndFlames,
+  ];
 
   const songsPromise = await Promise.all(midis).then((data) => {
-    const [takeOnMe, neverGonnaGiveYouUp, skyrim, whatIsLove, hesPirate] = data;
+    const [
+      takeOnMe,
+      neverGonnaGiveYouUp,
+      skyrim,
+      whatIsLove,
+      hesPirate,
+      throughFireAndFlames,
+    ] = data;
     const songs: MidiWithId[] = [
       { id: 1, song: takeOnMe, title: "Take On Me", author: "a-ha" },
       {
@@ -56,7 +71,14 @@ const getSongs = async () => {
       },
       { id: 4, song: whatIsLove, title: "What Is Love", author: "Haddaway" },
       { id: 5, song: hesPirate, title: "He's a Pirate", author: "Hans Zimmer" },
+      {
+        id: 6,
+        song: throughFireAndFlames,
+        title: "Through the Fire and Flames",
+        author: "Dragonforce",
+      },
     ];
+    console.log(songs);
     return songs;
   });
 

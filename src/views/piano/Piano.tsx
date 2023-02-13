@@ -15,8 +15,6 @@ type PressedKey = { note: Note; mesh: Mesh; soundId: number };
 
 const Piano = () => {
   const cameraRef = useRef<PerspectiveCameraProps>();
-
-  // const pressedKeys = useRef<Map<Note, PressedKey>>(new Map());
   const pointerKeyPressed = useRef<null | PressedKey>(null);
 
   const { keysPressed, midiPanel, allKeysRef, isMidiPlaying } = useAppStore();
