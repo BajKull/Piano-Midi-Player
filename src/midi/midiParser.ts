@@ -5,6 +5,7 @@ import skyrimMidi from "assets/midis/skyrim.mid";
 import whatIsLoveMidi from "assets/midis/whatIsLove.mid";
 import hesPirateMidi from "assets/midis/hesPirate.mid";
 import throughFireAndFlamesMidi from "assets/midis/throughFireAndFlames.mid";
+import glimpseOfUsMidi from "assets/midis/glimpseOfUs.mid";
 import { midiToKey } from "./midiKeys";
 import { Note } from "views/piano/pianoKeys";
 import { nanoid } from "nanoid";
@@ -36,6 +37,7 @@ const getSongs = async () => {
   const whatIsLove = Midi.fromUrl(whatIsLoveMidi);
   const hesPirate = Midi.fromUrl(hesPirateMidi);
   const throughFireAndFlames = Midi.fromUrl(throughFireAndFlamesMidi);
+  const glimpseOfUs = Midi.fromUrl(glimpseOfUsMidi);
 
   const midis = [
     takeOnMe,
@@ -44,6 +46,7 @@ const getSongs = async () => {
     whatIsLove,
     hesPirate,
     throughFireAndFlames,
+    glimpseOfUs,
   ];
 
   const songsPromise = await Promise.all(midis).then((data) => {
@@ -54,7 +57,7 @@ const getSongs = async () => {
       whatIsLove,
       hesPirate,
       throughFireAndFlames,
-      notesTest,
+      glimpseOfUs,
     ] = data;
     const songs: MidiWithId[] = [
       { id: 1, song: takeOnMe, title: "Take On Me", author: "a-ha" },
@@ -78,6 +81,7 @@ const getSongs = async () => {
         title: "Through the Fire and Flames",
         author: "Dragonforce",
       },
+      { id: 7, song: glimpseOfUs, title: "Glimpse Of Us", author: "Joji" },
     ];
     console.log(songs);
     return songs;
