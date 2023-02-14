@@ -1,5 +1,5 @@
-import React, { Suspense, useCallback, useEffect, useRef } from "react";
-import { Canvas, PerspectiveCameraProps, useThree } from "@react-three/fiber";
+import React, { useEffect, useRef } from "react";
+import { PerspectiveCameraProps, useThree } from "@react-three/fiber";
 import PianoModel from "./PianoModel";
 import { Center, PerspectiveCamera } from "@react-three/drei";
 import Lightning from "../scene/Lightning";
@@ -14,7 +14,6 @@ import useSongActions from "hooks/useSongActions";
 type PressedKey = { note: Note; mesh: Mesh; soundId: number };
 
 const Piano = () => {
-  const cameraRef = useRef<PerspectiveCameraProps>();
   const pointerKeyPressed = useRef<null | PressedKey>(null);
 
   const { keysPressed, midiPanel, allKeysRef, isMidiPlaying } = useAppStore();
@@ -34,6 +33,7 @@ const Piano = () => {
       const pointerKey = pointerKeyPressed.current;
       if (!pointerKey) return;
       stopKey({ ...pointerKey });
+      pointerKeyPressed.current = null;
     };
 
     window.addEventListener("pointerup", pointerUp);
@@ -82,27 +82,14 @@ const Piano = () => {
   }, [isMidiPlaying, stopAllKeys]);
 
   return (
-    <Canvas shadows className="h-full w-full">
-      <Bloom />
-      <Lightning />
-      <Controls />
-      <PerspectiveCamera
-        fov={60}
-        position={[29.74, 22.78, 0.2]}
-        rotation={[-1.56, 10.6, 1.56]}
-        zoom={2.35}
-        makeDefault
-        ref={cameraRef}
-      />
-      <Suspense fallback={null}>
-        <Center>
-          <PianoModel
-            allKeysRef={allKeysRef}
-            handlePointerDown={handlePointerDown}
-          />
-        </Center>
-      </Suspense>
-    </Canvas>
+    <>
+      <Center position={[0, 3, 0]}>
+        <PianoModel
+          allKeysRef={allKeysRef}
+          handlePointerDown={handlePointerDown}
+        />
+      </Center>
+    </>
   );
 };
 

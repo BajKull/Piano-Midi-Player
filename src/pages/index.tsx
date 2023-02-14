@@ -2,6 +2,14 @@ import Head from "next/head";
 import Piano from "views/piano/Piano";
 import Settings from "views/ui/settings/Settings";
 import CurrentlyPlayingMidi from "views/midiPlayer/CurrentlyPlayingMidi";
+import { Canvas, PerspectiveCameraProps } from "@react-three/fiber";
+import { Suspense, useRef } from "react";
+import Ocean from "views/scene/Ocean";
+import Lightning from "views/scene/Lightning";
+import Controls from "views/scene/Controls";
+import BloomEffect from "views/scene/Bloom";
+import { PerspectiveCamera } from "@react-three/drei";
+import SceneSky from "views/scene/Sky";
 
 export default function Home() {
   return (
@@ -13,8 +21,17 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Settings />
-      <Piano />
       <CurrentlyPlayingMidi />
+      <Canvas shadows className="h-full w-full">
+        <Suspense fallback={null}>
+          <SceneSky />
+          <Piano />
+          <Ocean />
+          <Lightning />
+          <Controls />
+          {/* <BloomEffect /> */}
+        </Suspense>
+      </Canvas>
     </div>
   );
 }
