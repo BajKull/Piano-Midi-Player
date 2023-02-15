@@ -1,9 +1,24 @@
-import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import {
+  OrbitControls,
+  OrbitControlsProps,
+  PerspectiveCamera,
+} from "@react-three/drei";
 import React from "react";
 import { useAppStore } from "store/store";
+import { Vector3 } from "three";
+
+const minPan = new Vector3(-100, 2, -100);
+const maxPan = new Vector3(100, 150, 100);
 
 const Controls = () => {
   const { cameraControl } = useAppStore();
+  const limitPanning = (e?: THREE.Event) => {
+    const orbitControls = e?.target as OrbitControlsProps;
+    if (!orbitControls) return;
+    const cameraTarget = orbitControls.target as Vector3;
+    cameraTarget.clamp(minPan, maxPan);
+  };
+
   return (
     <>
       <OrbitControls
@@ -11,6 +26,12 @@ const Controls = () => {
         enableRotate={cameraControl}
         enablePan={cameraControl}
         target={[-3.35, 4.37, -9.75]}
+        maxZoom={1.2}
+        minZoom={1}
+        minDistance={25}
+        maxDistance={150}
+        maxPolarAngle={Math.PI / 2}
+        onChange={limitPanning}
       />
       <PerspectiveCamera
         fov={60}
