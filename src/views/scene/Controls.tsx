@@ -7,8 +7,8 @@ import React from "react";
 import { useAppStore } from "store/store";
 import { Vector3 } from "three";
 
-const minPan = new Vector3(-100, 2, -100);
-const maxPan = new Vector3(100, 150, 100);
+const minPan = new Vector3(-75, 3, -75);
+const maxPan = new Vector3(75, 50, 75);
 
 const Controls = () => {
   const { cameraControl } = useAppStore();
@@ -37,7 +37,7 @@ const Controls = () => {
         fov={60}
         position={[32.74, 22.78, -9.75]}
         rotation={[-1.56, 10.6, 1.56]}
-        zoom={2.35}
+        zoom={2}
         makeDefault
       />
     </>
