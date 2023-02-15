@@ -662,7 +662,7 @@ const PianoModel = ({ handlePointerDown, ...props }: IProps) => {
         geometry={nodes.Floor.geometry}
         material={materials["White Key"]}
         position={[-0.1, -0.33, -9.77]}
-        scale={[3.24, 1, 17.16]}
+        scale={[3.14, 1, 17.16]}
       />
       <mesh
         castShadow
