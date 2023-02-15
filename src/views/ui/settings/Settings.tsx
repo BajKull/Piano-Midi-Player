@@ -8,12 +8,15 @@ import {
   faVolumeXmark,
   faArrowsUpDownLeftRight,
   faMusic,
+  faCog,
 } from "@fortawesome/free-solid-svg-icons";
 import VolumeSlider from "./VolumeSlider";
 import MidiPlayer from "views/midiPlayer/MidiPlayer";
+import Preferences from "./Preferences";
 
 const Settings = () => {
   const [volumeMenuExpanded, setVolumeMenuExpanded] = useState(false);
+  const [preferencesMenuExpanded, setPreferencesMenuExpanded] = useState(false);
   const {
     volume,
     cameraControl,
@@ -23,6 +26,7 @@ const Settings = () => {
   } = useAppStore();
 
   const volumeRef = useRef<HTMLDivElement | null>(null);
+  const preferencesRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
@@ -32,6 +36,15 @@ const Settings = () => {
     window.addEventListener("click", onClick);
     return () => window.removeEventListener("click", onClick);
   }, [setVolumeMenuExpanded]);
+
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (!preferencesRef.current?.contains(e.target as Node))
+        setPreferencesMenuExpanded(false);
+    };
+    window.addEventListener("click", onClick);
+    return () => window.removeEventListener("click", onClick);
+  }, [setPreferencesMenuExpanded]);
 
   return (
     <nav className="pointer-events-none absolute z-10 flex h-10 w-full bg-transparent p-5">
@@ -55,7 +68,7 @@ const Settings = () => {
         >
           <FontAwesomeIcon icon={faArrowsUpDownLeftRight} size="2x" />
         </Button>
-        <div className="relative" ref={volumeRef}>
+        <div className="relative mr-5 h-12 w-12" ref={volumeRef}>
           <Button
             className="pointer-events-auto h-12 w-12 rounded-full"
             title="Volume"
@@ -72,6 +85,18 @@ const Settings = () => {
             )}
           </Button>
           {volumeMenuExpanded && <VolumeSlider />}
+        </div>
+        <div className="relative h-12 w-12" ref={preferencesRef}>
+          <Button
+            className="pointer-events-auto h-12 w-12 rounded-full"
+            title="Volume"
+            aria-label="Volume"
+            onClick={() => setPreferencesMenuExpanded(!preferencesMenuExpanded)}
+            active={preferencesMenuExpanded}
+          >
+            <FontAwesomeIcon icon={faCog} />
+          </Button>
+          {preferencesMenuExpanded && <Preferences />}
         </div>
       </section>
     </nav>

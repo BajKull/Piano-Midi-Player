@@ -10,28 +10,42 @@ const SceneSky = () => {
         segments={50}
         position={[-250, 75, 0]}
         speed={0.1}
-        opacity={1}
+        opacity={0.75}
       />
       <Cloud
         scale={15}
         segments={50}
         position={[250, 75, 0]}
         speed={0.1}
-        opacity={0.25}
+        opacity={0.75}
       />
       <Cloud
         scale={15}
-        segments={30}
+        segments={25}
+        position={[75, 75, -350]}
         speed={0.1}
-        opacity={1}
-        position={[0, 75, -350]}
+        opacity={0.75}
       />
       <Cloud
         scale={15}
-        segments={30}
+        segments={25}
+        position={[-75, 75, -350]}
         speed={0.1}
-        opacity={1}
-        position={[0, 75, 350]}
+        opacity={0.75}
+      />
+      <Cloud
+        scale={15}
+        segments={25}
+        speed={0.1}
+        opacity={0.75}
+        position={[75, 75, 350]}
+      />
+      <Cloud
+        scale={15}
+        segments={25}
+        speed={0.1}
+        opacity={0.75}
+        position={[-75, 75, 350]}
       />
     </>
   );

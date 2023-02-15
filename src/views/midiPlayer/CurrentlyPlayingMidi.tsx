@@ -3,11 +3,12 @@ import { motion, useDragControls } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause } from "@fortawesome/free-solid-svg-icons";
 import Button from "components/button/Button";
-import { useAppStore, useTimestampStore } from "store/store";
+import { useAppStore } from "store/store";
 import { numberToTime } from "components/songCard/numberToTime";
 import cls from "./currentlyPlayingMidi.module.scss";
 import classNames from "classnames";
 import useSongActions from "hooks/useSongActions";
+import { useTimestampStore } from "store/timestampStore";
 
 const CurrentlyPlayingMidi = () => {
   const constraintsRef = useRef<HTMLDivElement>(null);

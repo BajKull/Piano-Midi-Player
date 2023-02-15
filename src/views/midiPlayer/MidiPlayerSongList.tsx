@@ -12,6 +12,7 @@ import { useAppStore } from "store/store";
 import useLocalStorage from "hooks/useLocalStorage";
 import { LOCAL_STORAGE_FAVORITES } from "constants/keys";
 import useSongActions from "hooks/useSongActions";
+import { useWaterColorStore } from "store/waterStore";
 
 type MidiTableSort = {
   field: "title" | "author" | "duration";
@@ -28,6 +29,7 @@ const MidiPlayerSongList = () => {
   const { showFavorites, songData, setSongMetaData, setSongData } =
     useAppStore();
   const { playSong, stopSong } = useSongActions();
+  const { setColor } = useWaterColorStore();
   const [favorites, setFavorites] = useLocalStorage<number[]>(
     LOCAL_STORAGE_FAVORITES,
     []
@@ -75,14 +77,17 @@ const MidiPlayerSongList = () => {
   const playMidi = (song: Midi, metaData: MidiMetadata, track: number) => {
     if (songData) stopSong();
     const newSongData = getSongData(song, track);
+    setColor(metaData.waterColor);
     playSong({ song: newSongData });
     setSongMetaData(metaData);
     setSongData(newSongData);
   };
 
+  console.log(songList);
+
   return (
-    <div>
-      <div className="flex py-5 px-5">
+    <>
+      <div className="flex pl-5 pb-5 pr-[46px]">
         <div className="min-w-[2.5rem] basis-10" />
         <TableHeader
           name="Song name"
@@ -107,19 +112,24 @@ const MidiPlayerSongList = () => {
         />
         <div className="min-w-[2.5rem] basis-10" />
       </div>
-      {songList
-        .filter(filterFavorites)
-        .sort(sortSongs)
-        .map((song) => (
-          <SongCard
-            key={song.id}
-            song={song}
-            isFavorite={favorites.includes(song.id)}
-            toggleFavorite={toggleFavorite(song.id)}
-            playSong={playMidi}
-          />
-        ))}
-    </div>
+      <div
+        className="custom-scroll overflow-y-scroll pr-5"
+        style={{ height: "calc(100% - 162px)" }}
+      >
+        {songList
+          .filter(filterFavorites)
+          .sort(sortSongs)
+          .map((song) => (
+            <SongCard
+              key={song.id}
+              midi={song}
+              isFavorite={favorites.includes(song.id)}
+              toggleFavorite={toggleFavorite(song.id)}
+              playSong={playMidi}
+            />
+          ))}
+      </div>
+    </>
   );
 };
 

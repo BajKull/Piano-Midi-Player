@@ -1,13 +1,10 @@
 import CloseButton from "components/button/closeButton/CloseButton";
-import Loading from "components/loading/Loading";
 import React, { useState } from "react";
 import { useAppStore } from "store/store";
 import { faCloudArrowUp, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "components/button/Button";
 import SearchBar from "components/searchBar/SearchBar";
-import Modal from "components/modal/Modal";
-import { getSongs } from "midi/midiParser";
 import MidiPlayerSongList from "./MidiPlayerSongList";
 
 const MidiPlayerContent = () => {
@@ -43,10 +40,7 @@ const MidiPlayerContent = () => {
         </div>
         <CloseButton className="ml-auto" onClick={() => toggleMidiPanel()} />
       </nav>
-      <div
-        className="custom-scroll overflow-auto px-5"
-        style={{ height: "calc(100% - 62px)" }}
-      >
+      <div className="mt-5 h-full px-5">
         <MidiPlayerSongList />
       </div>
     </div>

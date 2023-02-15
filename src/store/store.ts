@@ -43,16 +43,6 @@ interface PianoKeys {
 
 type AppStore = MidiPlaying & UserControls & AppSettings & PianoKeys;
 
-const createMidiPlayingTimestamp: StateCreator<
-  MidiPlayingTimestamp,
-  [],
-  [],
-  MidiPlayingTimestamp
-> = (set) => ({
-  songTimestamp: 0,
-  setSongTimestamp: (v) => set(() => ({ songTimestamp: v })),
-});
-
 const createMidiPlayingStore: StateCreator<AppStore, [], [], MidiPlaying> = (
   set
 ) => ({
@@ -99,8 +89,4 @@ export const useAppStore = create<AppStore>()((...a) => ({
   ...createUserControls(...a),
   ...createAppSettings(...a),
   ...createPianoKeys(...a),
-}));
-
-export const useTimestampStore = create<MidiPlayingTimestamp>()((...a) => ({
-  ...createMidiPlayingTimestamp(...a),
 }));

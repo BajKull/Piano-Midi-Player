@@ -1,6 +1,7 @@
 import { animate } from "framer-motion";
 import { getSongData, MidiMetadata } from "midi/midiParser";
-import { useAppStore, useTimestampStore } from "store/store";
+import { useAppStore } from "store/store";
+import { useTimestampStore } from "store/timestampStore";
 import { Mesh } from "three";
 import { Note, noteToMesh, sounds } from "views/piano/pianoKeys";
 
@@ -36,7 +37,6 @@ const useSongActions = () => {
     if (!sound) return;
     const soundId = sound.play();
     sound.volume(volume / 100 ?? 1, soundId);
-    console.log(note, soundId, volume / 100 ?? 1);
     keysPressed.set(note, { soundId, mesh });
     return soundId;
   };
@@ -49,13 +49,6 @@ const useSongActions = () => {
     const sound = sounds.get(note);
     if (!sound) return;
     keysPressed.delete(note);
-    console.log(
-      note,
-      sound.playing(soundId),
-      sound.volume(),
-      fadeTime || 50,
-      soundId
-    );
     sound.fade(1, 0, fadeTime || 250, soundId);
     sound.once("fade", () => sound.stop(soundId), soundId);
   };

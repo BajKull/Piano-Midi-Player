@@ -6,6 +6,7 @@ import whatIsLoveMidi from "assets/midis/whatIsLove.mid";
 import hesPirateMidi from "assets/midis/hesPirate.mid";
 import throughFireAndFlamesMidi from "assets/midis/throughFireAndFlames.mid";
 import glimpseOfUsMidi from "assets/midis/glimpseOfUs.mid";
+import interstellarMidi from "assets/midis/interstellar.mid";
 import { midiToKey } from "./midiKeys";
 import { Note } from "views/piano/pianoKeys";
 import { nanoid } from "nanoid";
@@ -22,6 +23,7 @@ export type MidiWithId = {
   song: Midi;
   title: string;
   author: string;
+  waterColor?: string;
 };
 
 export type MidiMetadata = Omit<MidiWithId, "song" | "id"> & {
@@ -38,6 +40,7 @@ const getSongs = async () => {
   const hesPirate = Midi.fromUrl(hesPirateMidi);
   const throughFireAndFlames = Midi.fromUrl(throughFireAndFlamesMidi);
   const glimpseOfUs = Midi.fromUrl(glimpseOfUsMidi);
+  const interstellar = Midi.fromUrl(interstellarMidi);
 
   const midis = [
     takeOnMe,
@@ -47,6 +50,7 @@ const getSongs = async () => {
     hesPirate,
     throughFireAndFlames,
     glimpseOfUs,
+    interstellar,
   ];
 
   const songsPromise = await Promise.all(midis).then((data) => {
@@ -58,6 +62,7 @@ const getSongs = async () => {
       hesPirate,
       throughFireAndFlames,
       glimpseOfUs,
+      interstellar,
     ] = data;
     const songs: MidiWithId[] = [
       { id: 1, song: takeOnMe, title: "Take On Me", author: "a-ha" },
@@ -80,8 +85,15 @@ const getSongs = async () => {
         song: throughFireAndFlames,
         title: "Through the Fire and Flames",
         author: "Dragonforce",
+        waterColor: "#a82222",
       },
       { id: 7, song: glimpseOfUs, title: "Glimpse Of Us", author: "Joji" },
+      {
+        id: 8,
+        song: interstellar,
+        title: "Interstellar",
+        author: "Hans Zimmer",
+      },
     ];
     console.log(songs);
     return songs;
