@@ -83,12 +83,12 @@ const Piano = () => {
 
   return (
     <>
-      <Center position={[0, 3, 0]}>
+      <group position={[0, 3, 0]}>
         <PianoModel
           allKeysRef={allKeysRef}
           handlePointerDown={handlePointerDown}
         />
-      </Center>
+      </group>
     </>
   );
 };
