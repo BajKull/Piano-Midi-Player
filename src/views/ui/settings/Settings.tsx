@@ -47,7 +47,7 @@ const Settings = () => {
   }, [setPreferencesMenuExpanded]);
 
   return (
-    <nav className="pointer-events-none absolute z-10 flex h-10 w-full bg-transparent p-5">
+    <nav className="pointer-events-none absolute top-5 z-10 flex h-12 w-full bg-transparent px-5">
       {midiPanel && <MidiPlayer />}
       <section className="ml-auto flex">
         <Button
