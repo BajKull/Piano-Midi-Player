@@ -65,20 +65,34 @@ const getSongs = async () => {
       interstellar,
     ] = data;
     const songs: MidiWithId[] = [
-      { id: 1, song: takeOnMe, title: "Take On Me", author: "a-ha" },
+      {
+        id: 1,
+        song: takeOnMe,
+        title: "Take On Me",
+        author: "a-ha",
+        waterColor: "#258c18",
+      },
       {
         id: 2,
         song: neverGonnaGiveYouUp,
         title: "Never Gonna Give You Up",
         author: "Rick Astley",
+        waterColor: "#ab562e",
       },
       {
         id: 3,
         song: skyrim,
         title: "Skyrim (Main Theme)",
         author: "Jeremy Soule",
+        waterColor: "#cbf5f2",
       },
-      { id: 4, song: whatIsLove, title: "What Is Love", author: "Haddaway" },
+      {
+        id: 4,
+        song: whatIsLove,
+        title: "What Is Love",
+        author: "Haddaway",
+        waterColor: "#e86fed",
+      },
       { id: 5, song: hesPirate, title: "He's a Pirate", author: "Hans Zimmer" },
       {
         id: 6,
@@ -87,7 +101,13 @@ const getSongs = async () => {
         author: "Dragonforce",
         waterColor: "#a82222",
       },
-      { id: 7, song: glimpseOfUs, title: "Glimpse Of Us", author: "Joji" },
+      {
+        id: 7,
+        song: glimpseOfUs,
+        title: "Glimpse Of Us",
+        author: "Joji",
+        waterColor: "#9e08a3",
+      },
       {
         id: 8,
         song: interstellar,
