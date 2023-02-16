@@ -10,6 +10,7 @@ import Controls from "views/scene/Controls";
 import BloomEffect from "views/scene/Bloom";
 import { PerspectiveCamera } from "@react-three/drei";
 import SceneSky from "views/scene/Sky";
+import { Duck } from "views/scene/Duck";
 
 export default function Home() {
   return (
@@ -26,6 +27,7 @@ export default function Home() {
         <Suspense fallback={null}>
           <SceneSky />
           <Piano />
+          <Duck />
           <Ocean />
           <Lightning />
           <Controls />
