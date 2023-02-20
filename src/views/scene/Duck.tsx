@@ -31,17 +31,19 @@ export function Duck(props: JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF("/duck.glb") as GLTFResult;
   const duckRef = useRef<Mesh | null>(null);
   const duckDirection = useRef(new Vector3());
-  const timeoutRef = useRef<NodeJS.Timer>()
+  const timeoutRef = useRef<NodeJS.Timer>();
   const duckRotation = useRef(1);
   const duckPushForce = useRef(1);
 
-  useFrame(({clock}) => {
+  useFrame(({ clock }) => {
     const duck = duckRef.current;
     if (!duck) return;
     const posAmount = Math.max(0.0005, 0.0015 * Math.random());
     const rotAmount = Math.max(Math.random() * 0.01);
     duck.getWorldDirection(duckDirection.current);
-    duck.position.add(duckDirection.current.multiplyScalar(posAmount * duckPushForce.current));
+    duck.position.add(
+      duckDirection.current.multiplyScalar(posAmount * duckPushForce.current)
+    );
     duck.position.clamp(BOUNDARY.min, BOUNDARY.max);
     duck.rotateY(rotAmount * duckRotation.current);
     duck.position.y = Math.sin(clock.getElapsedTime() * 1.5) * 0.02;
@@ -50,36 +52,40 @@ export function Duck(props: JSX.IntrinsicElements["group"]) {
   const pushDuck = () => {
     animate(1, 55, {
       repeat: 1,
-      repeatType: 'reverse',
-      onUpdate: (val) => duckPushForce.current = val,
+      repeatType: "reverse",
+      onUpdate: (val) => (duckPushForce.current = val),
       duration: 0.25,
-      ease: "easeOut"
-    })
-  }
+      ease: "easeOut",
+    });
+  };
 
   useEffect(() => {
     const resetTimer = () => {
-      const randomTime = Math.floor(Math.random() * 15 + 1)
+      const randomTime = Math.floor(Math.random() * 15 + 1);
       timeoutRef.current = setTimeout(() => {
         const switchDirection = (n: number) => {
           duckRotation.current = n;
           resetTimer();
-        }
+        };
         const direction = Math.floor(Math.random() * 3);
-        switch(direction) {
-          case 0: return switchDirection(-1);
-          case 1: return switchDirection(0);
-          case 2: return switchDirection(1);
-          default: return switchDirection(0);;
+        switch (direction) {
+          case 0:
+            return switchDirection(-1);
+          case 1:
+            return switchDirection(0);
+          case 2:
+            return switchDirection(1);
+          default:
+            return switchDirection(0);
         }
-      }, randomTime * 1000)
-    }
+      }, randomTime * 1000);
+    };
     resetTimer();
 
     return () => {
       clearTimeout(timeoutRef.current);
-    }
-  }, [])
+    };
+  }, []);
 
   return (
     <group {...props} dispose={null} scale={3}>

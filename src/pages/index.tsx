@@ -11,6 +11,7 @@ import BloomEffect from "views/scene/Bloom";
 import { PerspectiveCamera } from "@react-three/drei";
 import SceneSky from "views/scene/Sky";
 import { Duck } from "views/scene/Duck";
+import Rain from "views/scene/Rain";
 
 export default function Home() {
   return (
@@ -29,6 +30,7 @@ export default function Home() {
           <Piano />
           <Duck />
           <Ocean />
+          <Rain />
           <Lightning />
           <Controls />
           {/* <BloomEffect /> */}
