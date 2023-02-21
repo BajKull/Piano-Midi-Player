@@ -19,7 +19,11 @@ type MidiTableSort = {
   how: "asc" | "desc";
 };
 
-const MidiPlayerSongList = () => {
+interface IProps {
+  filter?: (song: MidiWithId) => void;
+}
+
+const MidiPlayerSongList = ({ filter }: IProps) => {
   const [songList, setSongList] = useState<MidiWithId[]>([]);
   const [sort, setSort] = useState<MidiTableSort | null>({
     field: "title",
@@ -61,9 +65,10 @@ const MidiPlayerSongList = () => {
     return b[sort.field].localeCompare(a[sort.field]);
   };
 
-  const filterFavorites = (song: MidiWithId) => {
-    if (!showFavorites) return true;
-    return favorites.includes(song.id);
+  const filterSongs = (song: MidiWithId) => {
+    if (showFavorites && !favorites.includes(song.id)) return false;
+    if (!filter) return true;
+    return filter(song);
   };
 
   const toggleFavorite = (id: number) => {
@@ -82,8 +87,6 @@ const MidiPlayerSongList = () => {
     setSongMetaData(metaData);
     setSongData(newSongData);
   };
-
-  console.log(songList);
 
   return (
     <>
@@ -117,7 +120,7 @@ const MidiPlayerSongList = () => {
         style={{ height: "calc(100% - 162px)" }}
       >
         {songList
-          .filter(filterFavorites)
+          .filter(filterSongs)
           .sort(sortSongs)
           .map((song) => (
             <SongCard

@@ -41,7 +41,12 @@ const MidiPlayerContent = () => {
         <CloseButton className="ml-auto" onClick={() => toggleMidiPanel()} />
       </nav>
       <div className="mt-5 h-full px-5">
-        <MidiPlayerSongList />
+        <MidiPlayerSongList
+          filter={(v) =>
+            v.title.toLowerCase().startsWith(searchText.toLowerCase()) ||
+            v.author.toLowerCase().startsWith(searchText.toLowerCase())
+          }
+        />
       </div>
     </div>
   );
