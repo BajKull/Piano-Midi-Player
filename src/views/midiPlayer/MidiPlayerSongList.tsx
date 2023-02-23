@@ -13,6 +13,7 @@ import useLocalStorage from "hooks/useLocalStorage";
 import { LOCAL_STORAGE_FAVORITES } from "constants/keys";
 import useSongActions from "hooks/useSongActions";
 import { useWaterColorStore } from "store/waterStore";
+import CardContainer from "components/card/CardContainer";
 
 type MidiTableSort = {
   field: "title" | "author" | "duration";
@@ -115,10 +116,7 @@ const MidiPlayerSongList = ({ filter }: IProps) => {
         />
         <div className="min-w-[2.5rem] basis-10" />
       </div>
-      <div
-        className="custom-scroll overflow-y-scroll pr-5"
-        style={{ height: "calc(100% - 162px)" }}
-      >
+      <CardContainer height="calc(100% - 162px)">
         {songList
           .filter(filterSongs)
           .sort(sortSongs)
@@ -131,7 +129,7 @@ const MidiPlayerSongList = ({ filter }: IProps) => {
               playSong={playMidi}
             />
           ))}
-      </div>
+      </CardContainer>
     </>
   );
 };

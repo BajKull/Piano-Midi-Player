@@ -9,6 +9,7 @@ import glimpseOfUsMidi from "assets/midis/glimpseOfUs.mid";
 import interstellarMidi from "assets/midis/interstellar.mid";
 import { midiToKey } from "./midiKeys";
 import { Note } from "views/piano/pianoKeys";
+import { Note as ToneNote } from "@tonejs/midi/dist/Note";
 import { nanoid } from "nanoid";
 
 type PianoEvent = {
@@ -122,9 +123,25 @@ const getSongs = async () => {
   return songsPromise;
 };
 
-const getSongData = (song: Midi, track: number) => {
-  const songNotes = song.tracks[track].notes;
+export const getSong = async (file: File) => {
+  const arrayBuffer = await file.arrayBuffer();
+  const midi = new Midi(arrayBuffer);
+  return midi;
+};
+
+const getSongData = (song: Midi, track: number | number[]) => {
+  const songNotes = Array.isArray(track)
+    ? song.tracks
+        .filter((t) => t.notes.length > 0)
+        .reduce((acc, t, index) => {
+          if (!track.includes(index)) return acc;
+          if (acc.length === 0) return t.notes;
+          return acc.concat(t.notes);
+        }, [] as ToneNote[])
+    : song.tracks[track].notes;
   if (!songNotes) return;
+
+  console.log(songNotes);
 
   // converting bpm and ppq into tick time
   const intervals = song.header.tempos.map((t, i) => ({

@@ -28,9 +28,9 @@ const Rain = () => {
     if (!meshRef.current) return;
     rainPositions.forEach((droplet, index) => {
       const { x, y, z } = getCoords();
-      droplet.x -= MOVEMENT_VALUE / 2;
+      droplet.x -= MOVEMENT_VALUE / 2 + droplet.vel / 10;
       droplet.y -= droplet.vel;
-      droplet.z -= MOVEMENT_VALUE / 4;
+      droplet.z -= MOVEMENT_VALUE / 4 + droplet.vel / 10;
       droplet.vel += delta / 10;
       if (droplet.y <= 0) {
         droplet.x = x;

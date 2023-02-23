@@ -7,6 +7,7 @@ import classNames from "classnames";
 import Button from "components/button/Button";
 import { MidiMetadata, MidiWithId } from "midi/midiParser";
 import colors from "tailwindcss/colors";
+import Card from "components/card/Card";
 interface IProps extends React.HTMLAttributes<HTMLDivElement> {
   midi: MidiWithId;
   isFavorite: boolean;
@@ -21,18 +22,13 @@ const SongCard = ({
   playSong,
   ...props
 }: IProps) => {
-  const clsDiv = classNames(
-    props.className,
-    "flex w-full items-center rounded-lg p-5 hover:bg-indigo-100"
-  );
-
   const handlePlaySong = () => {
     const { song, ...rest } = midi;
     playSong(song, { ...rest, duration: song.duration }, 0);
   };
 
   return (
-    <div {...props} className={clsDiv}>
+    <Card {...props} className={props.className}>
       <div className="min-w-[2.5rem] basis-10">
         <Button
           noBg
@@ -62,7 +58,7 @@ const SongCard = ({
           />
         </Button>
       </div>
-    </div>
+    </Card>
   );
 };
 
