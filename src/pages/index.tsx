@@ -10,8 +10,10 @@ import Controls from "views/scene/Controls";
 import SceneSky from "views/scene/Sky";
 import { Duck } from "views/scene/Duck";
 import Rain from "views/scene/Rain";
+import { usePreferencesStore } from "store/preferencesStore";
 
 export default function Home() {
+  const { rain, duck, fog, water } = usePreferencesStore();
   return (
     <div style={{ height: "100vh" }}>
       <Head>
@@ -24,11 +26,11 @@ export default function Home() {
       <CurrentlyPlayingMidi />
       <Canvas shadows className="h-full w-full">
         <Suspense fallback={null}>
-          <SceneSky />
+          <SceneSky showFog={fog} />
           <Piano />
-          <Duck />
-          <Ocean />
-          <Rain />
+          {duck && <Duck />}
+          {water && <Ocean />}
+          {rain && <Rain />}
           <Lightning />
           <Controls />
           {/* <BloomEffect /> */}
