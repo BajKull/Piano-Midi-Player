@@ -11,9 +11,10 @@ import SceneSky from "views/scene/Sky";
 import { Duck } from "views/scene/Duck";
 import Rain from "views/scene/Rain";
 import { usePreferencesStore } from "store/preferencesStore";
+import { Stats } from "@react-three/drei";
 
 export default function Home() {
-  const { rain, duck, fog, water } = usePreferencesStore();
+  const { rain, duck, fog, water, stats } = usePreferencesStore();
   return (
     <div style={{ height: "100vh" }}>
       <Head>
@@ -31,6 +32,7 @@ export default function Home() {
           {duck && <Duck />}
           {water && <Ocean />}
           {rain && <Rain />}
+          {stats && <Stats />}
           <Lightning />
           <Controls />
           {/* <BloomEffect /> */}

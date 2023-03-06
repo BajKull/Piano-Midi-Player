@@ -89,8 +89,8 @@ const Settings = () => {
         <div className="relative h-12 w-12" ref={preferencesRef}>
           <Button
             className="pointer-events-auto h-12 w-12 rounded-full"
-            title="Volume"
-            aria-label="Volume"
+            title="Preferences"
+            aria-label="Preferences"
             onClick={() => setPreferencesMenuExpanded(!preferencesMenuExpanded)}
             active={preferencesMenuExpanded}
           >

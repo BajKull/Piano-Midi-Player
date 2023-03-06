@@ -11,10 +11,12 @@ const Preferences = () => {
     duck,
     fog,
     water,
+    stats,
     toggleDuck,
     toggleFog,
     toggleRain,
     toggleWater,
+    toggleStats,
   } = usePreferencesStore();
   const { color, setColor } = useWaterColorStore();
 
@@ -39,6 +41,9 @@ const Preferences = () => {
         </Switch>
         <Switch className="my-2" checked={water} onChange={() => toggleWater()}>
           Water
+        </Switch>
+        <Switch className="my-2" checked={stats} onChange={() => toggleStats()}>
+          Statistics
         </Switch>
         <Color
           className="my-2"
