@@ -1,4 +1,4 @@
-import Range from "components/inputs/Range";
+import Range from "components/inputs/range/Range";
 import React, { useEffect, useRef } from "react";
 import { useAppStore } from "store/store";
 

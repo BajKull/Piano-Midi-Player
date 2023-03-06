@@ -16,11 +16,6 @@ interface MidiPlaying {
   lastNoteIndex: React.MutableRefObject<number | null>;
 }
 
-interface MidiPlayingTimestamp {
-  songTimestamp: number;
-  setSongTimestamp: (v: number) => void;
-}
-
 interface UserControls {
   keysPressed: Map<Note, { soundId: number; mesh: Mesh }>;
   showFavorites: boolean;

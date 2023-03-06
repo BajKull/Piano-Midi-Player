@@ -10,7 +10,7 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { Water } from "three-stdlib";
 import { DEFAULT_WATER_COLOR, useWaterColorStore } from "store/waterStore";
 import { Color } from "three";
-import { animate } from "framer-motion";
+import { animate, AnimationPlaybackControls } from "framer-motion";
 
 extend({ Water });
 
@@ -31,6 +31,7 @@ const Ocean = () => {
   const { color } = useWaterColorStore();
 
   const oldColorRef = useRef(color);
+  const animationRef = useRef<AnimationPlaybackControls | null>(null);
 
   const config = useMemo(
     () => ({
@@ -50,18 +51,17 @@ const Ocean = () => {
 
   useEffect(() => {
     const changeColor = () => {
-      animate(oldColorRef.current, color, {
+      if (animationRef.current?.isAnimating()) animationRef.current.stop();
+      animationRef.current = animate(oldColorRef.current, color, {
         duration: 5,
         onUpdate: (value) => {
           if (!ref.current) return;
           ref.current.material.uniforms["waterColor"].value = new Color(value);
+          oldColorRef.current = value;
         },
       });
     };
-    if (oldColorRef.current !== color) {
-      changeColor();
-      oldColorRef.current = color;
-    }
+    if (oldColorRef.current !== color) changeColor();
   }, [color]);
 
   useFrame((_state, delta) => {
