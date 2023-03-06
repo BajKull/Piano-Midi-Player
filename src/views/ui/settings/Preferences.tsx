@@ -46,7 +46,7 @@ const Preferences = () => {
           Statistics
         </Switch>
         <Color
-          className="my-2"
+          className="py-2"
           value={waterColor}
           onChange={(e) => setWaterColor(e.target.value)}
         >

@@ -13,7 +13,7 @@ const Color = ({ children, className, ...props }: IProps) => {
   return (
     <label className={clsLabel}>
       <span className="mr-3 text-sm font-medium">{children}</span>
-      <div className="ml-auto mr-3">
+      <div className="ml-auto mr-[10px] flex items-center">
         <input type="color" className={cls.colorInput} {...props} />
       </div>
     </label>
