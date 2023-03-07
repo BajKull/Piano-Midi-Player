@@ -2,7 +2,6 @@ import Loading from "components/loading/Loading";
 import Modal from "components/modal/Modal";
 import dynamic from "next/dynamic";
 import React from "react";
-import ReactDOM from "react-dom";
 import { useAppStore } from "store/store";
 
 const DynamicMidiPlayerContent = dynamic(() => import("./MidiPlayerContent"), {
@@ -17,12 +16,11 @@ const DynamicMidiPlayerContent = dynamic(() => import("./MidiPlayerContent"), {
 });
 
 const MidiPlayer = () => {
-  const { toggleMidiPanel } = useAppStore();
-  return ReactDOM.createPortal(
-    <Modal closeFn={toggleMidiPanel}>
+  const { toggleMidiPanel, midiPanel } = useAppStore();
+  return (
+    <Modal closeFn={toggleMidiPanel} show={midiPanel}>
       <DynamicMidiPlayerContent />
-    </Modal>,
-    document.body
+    </Modal>
   );
 };
 

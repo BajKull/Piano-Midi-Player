@@ -48,7 +48,7 @@ const Settings = () => {
 
   return (
     <nav className="pointer-events-none absolute top-5 z-10 flex h-12 w-full bg-transparent px-5">
-      {midiPanel && <MidiPlayer />}
+      <MidiPlayer />
       <section className="ml-auto flex">
         <Button
           className="pointer-events-auto mr-5 h-12 w-12 rounded-full"
