@@ -51,7 +51,10 @@ const MidiPlayerContent = () => {
             className="leading-6"
           />
         </div>
-        <CloseButton className="ml-auto" onClick={() => toggleMidiPanel()} />
+        <CloseButton
+          className="ml-auto -mr-3"
+          onClick={() => toggleMidiPanel()}
+        />
       </nav>
       <div className="mt-5 h-full px-5">
         {userFile ? (
