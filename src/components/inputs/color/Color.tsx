@@ -10,11 +10,16 @@ const Color = ({ children, className, ...props }: IProps) => {
     className
   );
 
+  const clsInput = classNames(
+    "container-shadow h-6 w-6 cursor-pointer appearance-none rounded-full border-0 p-0",
+    cls.colorInput
+  );
+
   return (
     <label className={clsLabel}>
       <span className="mr-3 text-sm font-medium">{children}</span>
       <div className="ml-auto mr-[10px] flex items-center">
-        <input type="color" className={cls.colorInput} {...props} />
+        <input type="color" className={clsInput} {...props} />
       </div>
     </label>
   );
